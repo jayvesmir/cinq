@@ -1,0 +1,6 @@
+# Directories
+.vscode/
+build/
+
+# Files
+run.*
