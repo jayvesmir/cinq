@@ -1,6 +1,7 @@
 #pragma once
 #include "Windows.hpp"
 #include "Exception.hpp"
+#include "../res/Resource.hpp"
 
 class Window {
 private:

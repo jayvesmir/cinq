@@ -10,13 +10,14 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "-O5")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "/O2 /MT /MP")
+    set(CMAKE_CXX_FLAGS "/O2 /MT /MP /EHsc")
 endif()
 
 
 add_executable(
     ${PROJECT_NAME}
     WIN32
+    res/Cinq.rc
     src/Cinq.cpp
     src/Window.cpp
     src/Exception.cpp

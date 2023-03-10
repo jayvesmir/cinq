@@ -7,8 +7,8 @@ Window::WindowClass::WindowClass() noexcept
     // Create window class
     WNDCLASSEX wc;
     wc.hInstance = hInstance;
-    wc.hIcon = nullptr;
-    wc.hIconSm = nullptr;
+    wc.hIcon = (HICON)(LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 32, 32, 0));
+    wc.hIconSm = (HICON)(LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, 0));; // It looks like total garbage but I like it :3
     wc.hCursor = nullptr;
     wc.hbrBackground = nullptr;
     wc.cbSize = sizeof(wc);
