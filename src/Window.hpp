@@ -1,26 +1,14 @@
 #pragma once
 #include "Windows.hpp"
 #include "Exception.hpp"
+#include "Keyboard.hpp"
 #include "../res/Resource.hpp"
 
 class Window {
 private:
-    HWND hWnd;
-    int width, height;
-
-    static Result CALLBACK handleMsgSetup(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
-    static Result CALLBACK handleMsgThunk(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
-    Result handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
-public:
-    Window(int width, int height, const char* title);
-    ~Window() { DestroyWindow(hWnd); }
-    Window(const Window&) = delete;
-    Window& operator=(const Window&) = delete;
-
-private:
     class WindowClass {
     private:
-        HINSTANCE hInstance; 
+        HINSTANCE hInstance;
         static WindowClass windowClass;
         static constexpr const char* className = "Cinq Renderer";
 
@@ -46,6 +34,21 @@ public:
         Result getErrorCode() const { return result; };
         const char* getErrorString() const { return translateErrorCode(result).c_str(); }
     };
+
+private:
+    HWND hWnd;
+    int width, height;
+
+    static Result CALLBACK handleMsgSetup(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
+    static Result CALLBACK handleMsgThunk(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
+    Result handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
+public:
+    Keyboard keyboard;
+
+    Window(int width, int height, const char* title);
+    ~Window() { DestroyWindow(hWnd); }
+    Window(const Window&) = delete;
+    Window& operator=(const Window&) = delete;
 };
 
 #define CINQ_WINDOW_EXCEPT(code) \

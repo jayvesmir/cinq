@@ -77,12 +77,31 @@ Result Window::handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) no
         case WM_CLOSE:
             PostQuitMessage(0);
             return 0;
+            
+        // Keyboard Messages
+        case WM_KEYDOWN:
+        case WM_SYSKEYDOWN:
+            // Check if the key was in a down state before this event
+            // in order to filter out autorepeated key presses.
+            if (!(param & 0x40000000) || keyboard.autorepeatIsEnabled())
+                keyboard.onKeyPressed((uint8_t)uParam);
+            break;
+        case WM_KEYUP:
+        case WM_SYSKEYUP:
+            keyboard.onKeyReleased((uint8_t)uParam);
+            break;
+        case WM_CHAR:
+            keyboard.onChar((uint8_t)uParam);
+            break;
+        case WM_KILLFOCUS:
+            keyboard.clearState();
+            break;
     }
 
     return DefWindowProc(hWnd, msg, uParam, param);
 }
 
-Window::Exception::Exception(int line, const char* filepath, Result result) 
+Window::Exception::Exception(int line, const char* filepath, Result result)
     : CinqException(line, filepath), result(result) {}
 
 const char* Window::Exception::what() const {

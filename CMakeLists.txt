@@ -21,4 +21,5 @@ add_executable(
     src/Cinq.cpp
     src/Window.cpp
     src/Exception.cpp
+    src/Keyboard.cpp
 )
