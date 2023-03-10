@@ -21,7 +21,7 @@ Window::WindowClass::WindowClass() noexcept
     RegisterClassEx(&wc);
 }
 
-Window::Window(int width, int height, const char* title) noexcept {
+Window::Window(int width, int height, const char* title) {
     // Compute the real size of the window 
     // so that the client region size matches
     // the width and height specified.
@@ -30,7 +30,8 @@ Window::Window(int width, int height, const char* title) noexcept {
     windowRect.right = width + windowRect.left;
     windowRect.top = 100;
     windowRect.bottom = height + windowRect.top;
-    AdjustWindowRect(&windowRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+    if (FAILED(AdjustWindowRect(&windowRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)))
+        throw CINQ_LAST_EXCEPT();
 
     // Create window
     hWnd = CreateWindowEx(
@@ -48,6 +49,9 @@ Window::Window(int width, int height, const char* title) noexcept {
         WindowClass::getInstance(),                 // Instance handle
         this                                        // Additional application data
     );
+
+    if (!hWnd)
+        throw CINQ_LAST_EXCEPT();
 
     ShowWindow(hWnd, SW_SHOWDEFAULT);
 }
@@ -76,4 +80,40 @@ Result Window::handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) no
     }
 
     return DefWindowProc(hWnd, msg, uParam, param);
+}
+
+Window::Exception::Exception(int line, const char* filepath, Result result) 
+    : CinqException(line, filepath), result(result) {}
+
+const char* Window::Exception::what() const {
+    char format[512];
+    sprintf(format, "%s thrown in %s\n\n[Code] %lld\n[Description] %s", getType(), getOriginString().c_str(), getErrorCode(), getErrorString());
+    whatBuffer = std::string(format);
+    return whatBuffer.c_str();
+}
+
+const char* Window::Exception::getType() const {
+    return "Cinq Window Exception";
+}
+
+// https://github.com/planetchili/hw3d/blob/master/hw3d/Window.cpp
+std::string Window::Exception::translateErrorCode(Result code) {
+    char* pMsgBuf = nullptr;
+	// windows will allocate memory for err string and make our pointer point to it
+	const DWORD nMsgLen = FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		nullptr,code,MAKELANGID( LANG_NEUTRAL,SUBLANG_DEFAULT ),
+		reinterpret_cast<LPSTR>(&pMsgBuf),0,nullptr
+	);
+	// 0 string length returned indicates a failure
+	if( nMsgLen == 0 )
+	{
+		return "Unidentified error code";
+	}
+	// copy error string from windows-allocated buffer to std::string
+	std::string errorString = pMsgBuf;
+	// free windows buffer
+	LocalFree( pMsgBuf );
+	return errorString;
 }

@@ -19,4 +19,5 @@ add_executable(
     WIN32
     src/Cinq.cpp
     src/Window.cpp
+    src/Exception.cpp
 )
