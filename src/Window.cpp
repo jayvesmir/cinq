@@ -21,7 +21,8 @@ Window::WindowClass::WindowClass() noexcept
     RegisterClassEx(&wc);
 }
 
-Window::Window(int width, int height, const char* title) {
+Window::Window(int width, int height, const char* title) 
+    : width(width), height(height) {
     // Compute the real size of the window 
     // so that the client region size matches
     // the width and height specified.
@@ -30,7 +31,7 @@ Window::Window(int width, int height, const char* title) {
     windowRect.right = width + windowRect.left;
     windowRect.top = 100;
     windowRect.bottom = height + windowRect.top;
-    if (FAILED(AdjustWindowRect(&windowRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)))
+    if (AdjustWindowRect(&windowRect, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) == FALSE)
         throw CINQ_LAST_EXCEPT();
 
     // Create window
@@ -54,6 +55,11 @@ Window::Window(int width, int height, const char* title) {
         throw CINQ_LAST_EXCEPT();
 
     ShowWindow(hWnd, SW_SHOWDEFAULT);
+}
+
+void Window::title(const char* title) {
+    if (SetWindowText(hWnd, title) == FALSE)
+        throw CINQ_LAST_EXCEPT();
 }
 
 Result CALLBACK Window::handleMsgSetup(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept {
@@ -96,6 +102,56 @@ Result Window::handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) no
         case WM_KILLFOCUS:
             keyboard.clearState();
             break;
+        
+        // Mouse Messages
+        case WM_MOUSEMOVE: {
+            POINTS pts = MAKEPOINTS(param);
+            // if in client region register mouse move and and capture mouse
+            if (pts.x >= 0 && pts.x < width && pts.y >= 0 && pts.y < height) {
+                mouse.onMouseMove(pts.x, pts.y);
+                if (!mouse.inClientRegion()) {
+                    SetCapture(hWnd);
+                    mouse.onMouseEnter();
+                }
+            } else {
+                // if left or right buttons are down register mouse move
+                if (uParam & (MK_LBUTTON | MK_RBUTTON))
+                    mouse.onMouseMove(pts.x, pts.y);
+                else {
+                    ReleaseCapture();
+                    mouse.onMouseLeave();
+                }
+            }
+            break;
+        }
+        case WM_LBUTTONDOWN: {
+            POINTS pts = MAKEPOINTS(param);
+            mouse.onLeftPressed(pts.x, pts.y);
+            break;
+        }
+        case WM_LBUTTONUP: {
+            POINTS pts = MAKEPOINTS(param);
+            mouse.onLeftReleased(pts.x, pts.y);
+            break;
+        }
+        case WM_RBUTTONDOWN: {
+            POINTS pts = MAKEPOINTS(param);
+            mouse.onRightPressed(pts.x, pts.y);
+            break;
+        }
+        case WM_RBUTTONUP: {
+            POINTS pts = MAKEPOINTS(param);
+            mouse.onRightReleased(pts.x, pts.y);
+            break;
+        }
+        case WM_MOUSEWHEEL: {
+            POINTS pts = MAKEPOINTS(param);
+            if (GET_WHEEL_DELTA_WPARAM(uParam) > 0)
+                mouse.onWheelUp(pts.x, pts.y);
+            else
+                mouse.onWheelDown(pts.x, pts.y);
+            break;
+        }
     }
 
     return DefWindowProc(hWnd, msg, uParam, param);

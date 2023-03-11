@@ -1,7 +1,8 @@
 #pragma once
+#include "Mouse.hpp"
 #include "Windows.hpp"
-#include "Exception.hpp"
 #include "Keyboard.hpp"
+#include "Exception.hpp"
 #include "../res/Resource.hpp"
 
 class Window {
@@ -43,12 +44,14 @@ private:
     static Result CALLBACK handleMsgThunk(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
     Result handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
 public:
+    Mouse mouse;
     Keyboard keyboard;
 
     Window(int width, int height, const char* title);
     ~Window() { DestroyWindow(hWnd); }
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
+    void title(const char* title);
 };
 
 #define CINQ_WINDOW_EXCEPT(code) \

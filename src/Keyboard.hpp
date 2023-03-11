@@ -14,12 +14,12 @@ public:
         };
 
         Event() = default;
-        Event(Type type, uint8_t code) noexcept
+        Event(Type type, uint8_t code) 
             : type(type), code(code) {}
 
-        bool isPress() const noexcept { return type == Type::PRESS; }
-        bool isRelease() const noexcept { return type == Type::RELEASE; }
-        uint8_t getCode() const noexcept { return code; }
+        bool isPress() const  { return type == Type::PRESS; }
+        bool isRelease() const  { return type == Type::RELEASE; }
+        uint8_t getCode() const  { return code; }
 
     private:
         Type type;
@@ -31,33 +31,33 @@ private:
     static constexpr uint32_t nKeys = 256;
     static constexpr uint32_t bufferSize = 16;
 
-    std::queue<Event> keyBuffer;
     std::queue<char> charBuffer;
+    std::queue<Event> keyBuffer;
     std::bitset<nKeys> keystates;
 
-    void onKeyPressed(unsigned char keycode) noexcept;
-    void onKeyReleased(unsigned char keycode) noexcept;
-    void onChar(char character) noexcept;
-    void clearState() noexcept { keystates.reset(); }
+    void onKeyPressed(unsigned char keycode);
+    void onKeyReleased(unsigned char keycode);
+    void onChar(char character);
+    void clearState()  { keystates.reset(); }
     template<typename T>
-    static void trimBuffer(std::queue<T>& buffer) noexcept;
+    static void trimBuffer(std::queue<T>& buffer);
 
 public:
     Keyboard() = default;
     Keyboard(const Keyboard&) = delete;
     Keyboard& operator=(const Keyboard&) = delete;
 
-    bool keyIsPressed(unsigned char keycode) const noexcept { return keystates[keycode]; }
-    Event readKey() noexcept;
-    bool keyIsEmpty() const noexcept { return keyBuffer.empty(); }
-    void flushKey() noexcept { keyBuffer = std::queue<Event>(); }
+    bool keyIsPressed(unsigned char keycode) const  { return keystates[keycode]; }
+    Event readKey();
+    bool keyIsEmpty() const  { return keyBuffer.empty(); }
+    void flushKey()  { keyBuffer = std::queue<Event>(); }
 
-    char readChar() noexcept;
-    bool charIsEmpty() const noexcept { return charBuffer.empty(); }
-    void flushChar() noexcept { charBuffer = std::queue<char>(); }
-    void flush() noexcept;
+    char readChar();
+    bool charIsEmpty() const  { return charBuffer.empty(); }
+    void flushChar()  { charBuffer = std::queue<char>(); }
+    void flush();
 
-    void enableAutorepeat() noexcept { autorepeatEnabled = true; }
-    void disableAutorepeat() noexcept { autorepeatEnabled = false; }
-    bool autorepeatIsEnabled() const noexcept { return autorepeatEnabled; }
+    void enableAutorepeat()  { autorepeatEnabled = true; }
+    void disableAutorepeat()  { autorepeatEnabled = false; }
+    bool autorepeatIsEnabled() const  { return autorepeatEnabled; }
 };

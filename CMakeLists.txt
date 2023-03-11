@@ -19,7 +19,8 @@ add_executable(
     WIN32
     res/Cinq.rc
     src/Cinq.cpp
+    src/Mouse.cpp
     src/Window.cpp
-    src/Exception.cpp
     src/Keyboard.cpp
+    src/Exception.cpp
 )
