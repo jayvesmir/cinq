@@ -68,6 +68,19 @@ void Mouse::onWheelDown(int x, int y) {
 	trimBuffer();
 }
 
+void Mouse::onWheelSpin(int x, int y, int delta) {
+	wheelDelta += delta;
+	while(wheelDelta >= WHEEL_DELTA) {
+		wheelDelta -= WHEEL_DELTA;
+		onWheelUp(x, y);
+	}
+
+	while(wheelDelta <= -WHEEL_DELTA) {
+		wheelDelta += WHEEL_DELTA;
+		onWheelDown(x, y);
+	}
+}
+
 void Mouse::trimBuffer() {
 	while(eventBuffer.size() > bufferSize) {
 		eventBuffer.pop();

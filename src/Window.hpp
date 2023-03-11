@@ -51,7 +51,7 @@ public:
     ~Window() { DestroyWindow(hWnd); }
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
-    void title(const char* title);
+    const char* title(const char* title = nullptr);
 };
 
 #define CINQ_WINDOW_EXCEPT(code) \

@@ -1,6 +1,8 @@
 #pragma once
-
 #include <queue>
+
+// https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-mousewheel
+#define WHEEL_DELTA 120
 
 class Mouse {
     friend class Window;
@@ -60,6 +62,7 @@ private:
     bool leftDown = false;
     bool rightDown = false;
     bool cursorInWindow = false;
+    int wheelDelta = 0;
     uint32_t bufferSize = 16;
     std::queue<Event> eventBuffer;
 
@@ -72,5 +75,6 @@ private:
 	void onRightReleased(int x,int y);
 	void onWheelUp(int x,int y);
 	void onWheelDown(int x,int y);
+    void onWheelSpin(int x, int y, int delta);
 	void trimBuffer();
 };

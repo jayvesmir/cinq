@@ -57,9 +57,16 @@ Window::Window(int width, int height, const char* title)
     ShowWindow(hWnd, SW_SHOWDEFAULT);
 }
 
-void Window::title(const char* title) {
-    if (SetWindowText(hWnd, title) == FALSE)
-        throw CINQ_LAST_EXCEPT();
+// Returns window title before change
+const char* Window::title(const char* title) {
+    char titleBuffer[128];
+    GetWindowText(hWnd, titleBuffer, 128);
+    std::string lastTitle(titleBuffer);
+    if (title) {
+        if (SetWindowText(hWnd, title) == FALSE)
+            throw CINQ_LAST_EXCEPT();
+    }
+    return lastTitle.c_str();
 }
 
 Result CALLBACK Window::handleMsgSetup(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept {
@@ -146,11 +153,7 @@ Result Window::handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) no
         }
         case WM_MOUSEWHEEL: {
             POINTS pts = MAKEPOINTS(param);
-            if (GET_WHEEL_DELTA_WPARAM(uParam) > 0)
-                mouse.onWheelUp(pts.x, pts.y);
-            else
-                mouse.onWheelDown(pts.x, pts.y);
-            break;
+            mouse.onWheelSpin(pts.x, pts.y, GET_WHEEL_DELTA_WPARAM(uParam));
         }
     }
 
