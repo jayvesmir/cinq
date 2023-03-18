@@ -61,12 +61,28 @@ Window::Window(int width, int height, const char* title)
 const char* Window::title(const char* title) {
     char titleBuffer[128];
     GetWindowText(hWnd, titleBuffer, 128);
-    std::string lastTitle(titleBuffer);
+    char lastTitle[128];
+    memcpy(lastTitle, titleBuffer, 128);
     if (title) {
         if (SetWindowText(hWnd, title) == FALSE)
             throw CINQ_LAST_EXCEPT();
     }
-    return lastTitle.c_str();
+    return lastTitle;
+}
+
+bool Window::processMessages(int* exitCode) {
+    MSG msg;
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+        if (msg.message == WM_QUIT) {
+            *exitCode = (int)msg.wParam;
+            return true;
+        }
+
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+    return false;
 }
 
 Result CALLBACK Window::handleMsgSetup(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept {

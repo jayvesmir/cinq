@@ -1,22 +1,12 @@
-#include "Windows.hpp"
+#include "Cinq.hpp"
 #include "Window.hpp"
+#include "Windows.hpp"
 #include "Exception.hpp"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdShow) {
+    Cinq cinq(1600, 900, "Cinq");
     try {
-        Window window(1280, 720, "Cinq");
-
-        // Process messages
-        MSG msg;
-        int msgResult;
-        while ((msgResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-
-        if (msgResult == -1)
-            return msgResult;
-        return msg.wParam;
+        cinq.run();
     } catch (const CinqException& e) {
         MessageBox(nullptr, e.what(), e.getType(), MB_OK | MB_ICONERROR);
     } catch (const std::exception& e) {

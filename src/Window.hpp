@@ -5,6 +5,8 @@
 #include "Exception.hpp"
 #include "../res/Resource.hpp"
 
+#include <optional>
+
 class Window {
 private:
     class WindowClass {
@@ -52,6 +54,7 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
     const char* title(const char* title = nullptr);
+    static bool processMessages(int* exitCode);
 };
 
 #define CINQ_WINDOW_EXCEPT(code) \
