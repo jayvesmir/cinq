@@ -44,18 +44,18 @@ public:
 
 public:
     Mouse() = default;
-	Mouse( const Mouse& ) = delete;
-	Mouse& operator=( const Mouse& ) = delete;
+    Mouse( const Mouse& ) = delete;
+    Mouse& operator=( const Mouse& ) = delete;
 
-	int X() const { return x; }
-	int Y() const { return y; }
+    int X() const { return x; }
+    int Y() const { return y; }
     std::pair<int, int> getPosition() const { return { x, y }; }
-	bool leftIsPressed() const { return leftDown; }
-	bool rightIsPressed() const { return rightDown; }
-	bool inClientRegion() const { return cursorInWindow; }
-	Mouse::Event read();
-	bool empty() const { return eventBuffer.empty(); }
-	void flush();
+    bool leftIsPressed() const { return leftDown; }
+    bool rightIsPressed() const { return rightDown; }
+    bool inClientRegion() const { return cursorInWindow; }
+    Mouse::Event read();
+    bool empty() const { return eventBuffer.empty(); }
+    void flush();
 
 private:
     int x, y;
@@ -69,12 +69,12 @@ private:
     void onMouseEnter();
     void onMouseLeave();
     void onMouseMove(int x,int y);
-	void onLeftPressed(int x,int y);
-	void onLeftReleased(int x,int y);
-	void onRightPressed(int x,int y);
-	void onRightReleased(int x,int y);
-	void onWheelUp(int x,int y);
-	void onWheelDown(int x,int y);
+    void onLeftPressed(int x,int y);
+    void onLeftReleased(int x,int y);
+    void onRightPressed(int x,int y);
+    void onRightReleased(int x,int y);
+    void onWheelUp(int x,int y);
+    void onWheelDown(int x,int y);
     void onWheelSpin(int x, int y, int delta);
-	void trimBuffer();
+    void trimBuffer();
 };

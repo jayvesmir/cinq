@@ -18,7 +18,7 @@ add_executable(
     ${PROJECT_NAME}
     WIN32
     res/Cinq.rc
-    src/Cinq.cpp
+    src/Ayanami.cpp
     src/Mouse.cpp
     src/Window.cpp
     src/Keyboard.cpp
