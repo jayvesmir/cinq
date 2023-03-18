@@ -41,6 +41,7 @@ public:
 private:
     HWND hWnd;
     int width, height;
+    char* title;
 
     static Result CALLBACK handleMsgSetup(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
     static Result CALLBACK handleMsgThunk(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
@@ -53,7 +54,8 @@ public:
     ~Window() { DestroyWindow(hWnd); }
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
-    const char* title(const char* title = nullptr);
+    void setTitle(const char* title = nullptr);
+    const char* getTitle() { return title; }
     static bool processMessages(int* exitCode);
 };
 

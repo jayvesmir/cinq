@@ -18,7 +18,7 @@ void Cinq::update() {
     float t = timer.markLap();
     char buf[128];
     sprintf(buf, "%s (%.2fms since last frame)", title, t*1000); 
-    window.title(buf);
+    window.setTitle(buf);
 
     // Sleep for 1 millisecond to prevent Windows from shitting itself from too many window renames
     timer.wait(1);

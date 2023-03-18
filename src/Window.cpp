@@ -57,17 +57,12 @@ Window::Window(int width, int height, const char* title)
     ShowWindow(hWnd, SW_SHOWDEFAULT);
 }
 
-// Returns window title before change
-const char* Window::title(const char* title) {
-    char titleBuffer[128];
-    GetWindowText(hWnd, titleBuffer, 128);
-    char lastTitle[128];
-    memcpy(lastTitle, titleBuffer, 128);
+void Window::setTitle(const char* title) {
+    this->title = (char*)title;
     if (title) {
         if (SetWindowText(hWnd, title) == FALSE)
             throw CINQ_LAST_EXCEPT();
     }
-    return lastTitle;
 }
 
 bool Window::processMessages(int* exitCode) {
