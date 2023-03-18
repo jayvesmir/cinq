@@ -14,7 +14,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, 
             DispatchMessage(&msg);
         }
 
-        if (msgResult == -1);
+        if (msgResult == -1)
             return msgResult;
         return msg.wParam;
     } catch (const CinqException& e) {
