@@ -3,8 +3,13 @@
 #include "Windows.hpp"
 #include "Exception.hpp"
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdShow) {
-    Cinq cinq(1600, 900, "Cinq");
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdShow) { 
+    const float aspectRatio = 16/9.;
+    const int   width       = 1440;
+    const int   height      = width / aspectRatio;
+
+    Cinq cinq(width, height, "Cinq");
+    
     try {
         cinq.run();
     } catch (const CinqException& e) {
@@ -14,6 +19,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, 
     } catch (...) {
         MessageBox(nullptr, "Unknown error", "Unknown Error", MB_OK | MB_ICONERROR);
     }
-    
+
     return -1;
 }

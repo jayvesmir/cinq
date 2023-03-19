@@ -2,10 +2,12 @@
 #include "Mouse.hpp"
 #include "Windows.hpp"
 #include "Keyboard.hpp"
+#include "Pipeline.hpp"
 #include "Exception.hpp"
 #include "../res/Resource.hpp"
 
 #include <optional>
+#include <memory>
 
 class Window {
 private:
@@ -40,8 +42,9 @@ public:
 
 private:
     HWND hWnd;
-    int width, height;
     char* title;
+    int width, height;
+    std::unique_ptr<Pipeline> pipeline;
 
     static Result CALLBACK handleMsgSetup(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
     static Result CALLBACK handleMsgThunk(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept;
@@ -57,6 +60,7 @@ public:
     void setTitle(const char* title = nullptr);
     const char* getTitle() { return title; }
     static bool processMessages(int* exitCode);
+    Pipeline& getGraphicsPipeline() { return *pipeline; }
 };
 
 #define CINQ_WINDOW_EXCEPT(code) \

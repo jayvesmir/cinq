@@ -13,7 +13,6 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "/O2 /MT /MP /EHsc")
 endif()
 
-
 add_executable(
     ${PROJECT_NAME}
     WIN32
@@ -23,6 +22,13 @@ add_executable(
     src/timer.cpp
     src/Window.cpp
     src/Ayanami.cpp
+    src/Pipeline.cpp
     src/Keyboard.cpp
     src/Exception.cpp
+)
+
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+    d3d11.lib
 )

@@ -20,6 +20,11 @@ void Cinq::update() {
     sprintf(buf, "%s (%.2fms since last frame)", title, t*1000); 
     window.setTitle(buf);
 
-    // Sleep for 1 millisecond to prevent Windows from shitting itself from too many window renames
-    timer.wait(1);
+    window.getGraphicsPipeline().presentFrame();
+
+    // Can now be removed because presentFrame() handles the blocking.
+    // I'm still keeping it just in case something else makes windows cry again
+    // and I won't remember how to calm it down.
+    /* Sleep for 1 millisecond to prevent Windows from shitting itself from too many window renames
+    timer.wait(1); */
 }

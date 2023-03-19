@@ -55,6 +55,8 @@ Window::Window(int width, int height, const char* title)
         throw CINQ_LAST_EXCEPT();
 
     ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+    pipeline = std::make_unique<Pipeline>(hWnd);
 }
 
 void Window::setTitle(const char* title) {
