@@ -3,6 +3,9 @@
 #include "Window.hpp"
 #include "Timer.hpp"
 
+#include <cstdlib> 
+#include <ctime>
+
 class Cinq {
 public:
     Cinq();

@@ -7,6 +7,7 @@ Cinq::Cinq(int width, int height, const char* title)
     : window(width, height, title), width(width), height(height), title(title) {}
 
 int Cinq::run() {
+    srand((unsigned)time(0));
     int error;
     while (!window.processMessages(&error))
         update();
@@ -20,9 +21,10 @@ void Cinq::update() {
     sprintf(buf, "%s (%.2fms since last frame)", title, t*1000); 
     window.setTitle(buf);
 
-    window.getGraphicsPipeline().presentFrame();
+    window.getGraphicsPipeline().clearBuffer(Color::random(1.f));
+    window.getGraphicsPipeline().presentBuffer();
 
-    // Can now be removed because presentFrame() handles the blocking.
+    // Can now be removed because presentBuffer() handles the blocking.
     // I'm still keeping it just in case something else makes windows cry again
     // and I won't remember how to calm it down.
     /* Sleep for 1 millisecond to prevent Windows from shitting itself from too many window renames

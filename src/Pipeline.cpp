@@ -16,13 +16,13 @@ Pipeline::Pipeline(HWND hWnd) {
     swapchainDesc.OutputWindow = hWnd;
     swapchainDesc.Windowed = TRUE;
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-    swapchainDesc.Flags = 0;
+    swapchainDesc.Flags = NULL;
 
     D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
-        0,
+        NULL,
         nullptr,
         0,
         D3D11_SDK_VERSION,
@@ -32,8 +32,18 @@ Pipeline::Pipeline(HWND hWnd) {
         nullptr,
         &deviceContext
     );
+
+    ID3D11Resource* backBuffer = nullptr;
+    swapchain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)(&backBuffer));
+    device->CreateRenderTargetView(
+        backBuffer,
+        nullptr,
+        &renderTarget
+    );
+
+    backBuffer->Release();
 }
 
- void Pipeline::presentFrame() {
+ void Pipeline::presentBuffer() {
     swapchain->Present(1, NULL);
  }
