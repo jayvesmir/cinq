@@ -17,14 +17,16 @@ int Cinq::run() {
 
 void Cinq::update() {
     float t = timer.markLap();
-    char buf[128];
-    sprintf(buf, "%s (%.2fms since last frame)", title, t*1000); 
-    window.setTitle(buf);
 
     window.getGraphicsPipeline().clearBuffer({.1f, .1f, .1f, .1f});
     window.getGraphicsPipeline().draw();
-    window.getGraphicsPipeline().presentBuffer();
 
+    float t1 = timer.sinceLastLap();
+    char buf[128];
+    sprintf(buf, "%s %.2fms frametime (%.2fms since last update)", title, t1*1000, t*1000); 
+    window.setTitle(buf);
+
+    window.getGraphicsPipeline().presentBuffer();
     // Can now be removed because presentBuffer() handles the blocking.
     // I'm still keeping it just in case something else makes windows cry again
     // and I won't remember how to calm it down.

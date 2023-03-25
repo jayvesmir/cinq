@@ -5,6 +5,8 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+namespace wrl = Microsoft::WRL;
+
 class Pipeline {
 public:
     Pipeline(HWND hWnd, int width, int height);
