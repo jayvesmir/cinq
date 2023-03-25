@@ -46,18 +46,21 @@ void Pipeline::presentBuffer() {
     swapchain->Present(1, NULL);
 }
 
-void Pipeline::draw() {
+void Pipeline::draw(float time) {
     struct Point {
         float x, y;
         float r, g, b;
     };
 
-    Point vertices[] = {
-        { .5f,  .5f, 1.f, 0.f, 0.f}, // top-right
-        { .5f, -.5f, 0.f, 1.f, 0.f}, // bottom-right
-        {-.5f, -.5f, 0.f, 0.f, 1.f}, // bottom-left
+    float c = sinf(time) / 2.f;
+    float cc = cosf(time) / 2.f;
 
-        {-.5f,  .5f, 0.f, 1.f, 0.f}, // top-left
+    Point vertices[] = {
+        { .5f,  .5f, 1.f, c, cc}, // top-right
+        { .5f, -.5f, cc, 1.f, c}, // bottom-right
+        {-.5f, -.5f, c, cc, 1.f}, // bottom-left
+
+        {-.5f,  .5f, c, 1.f, cc}, // top-left
     };
 
     uint16_t indices[] = {

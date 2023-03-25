@@ -19,7 +19,7 @@ void Cinq::update() {
     float t = timer.markLap();
 
     window.getGraphicsPipeline().clearBuffer({.1f, .1f, .1f, .1f});
-    window.getGraphicsPipeline().draw();
+    window.getGraphicsPipeline().draw(timer.sinceStart());
 
     float t1 = timer.sinceLastLap();
     char buf[128];

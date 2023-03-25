@@ -19,7 +19,7 @@ public:
         deviceContext->ClearRenderTargetView(renderTarget.Get(), color.data);
     }
 
-    void draw();
+    void draw(float time);
 
 private:
     wrl::ComPtr<ID3D11Device> device = nullptr;
