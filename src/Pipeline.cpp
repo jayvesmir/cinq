@@ -49,16 +49,17 @@ void Pipeline::presentBuffer() {
 void Pipeline::draw() {
     struct Point {
         float x, y;
+        float r, g, b;
     };
 
     const Point vertices[] = {
-        { .5f,  .5f},
-        { .5f, -.5f},
-        {-.5f, -.5f},
+        { .5f,  .5f, 1.f, 0.f, 0.f},
+        { .5f, -.5f, 0.f, 1.f, 0.f},
+        {-.5f, -.5f, 0.f, 0.f, 1.f},
 
-        {-.5f,  .5f},
-        { .5f,  .5f},
-        {-.5f, -.5f}
+        {-.5f,  .5f, 0.f, 1.f, 0.f},
+        { .5f,  .5f, 1.f, 0.f, 0.f},
+        {-.5f, -.5f, 0.f, 0.f, 1.f}
     };
 
     wrl::ComPtr<ID3D11Buffer> vertexBuffer;
@@ -78,11 +79,6 @@ void Pipeline::draw() {
     const uint offset = 0;
     deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
-    wrl::ComPtr<ID3D11InputLayout> inputLayout;
-    const D3D11_INPUT_ELEMENT_DESC elementDescriptor[] = {
-        {"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
-    };
-
     wrl::ComPtr<ID3DBlob> blob;
     wrl::ComPtr<ID3D11PixelShader> pixelShader;
     D3DReadFileToBlob(L"shader/pixel.cso", &blob);
@@ -94,10 +90,16 @@ void Pipeline::draw() {
     device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, vertexShader.GetAddressOf());
     deviceContext->VSSetShader(vertexShader.Get(), nullptr, NULL);
 
-    device->CreateInputLayout(elementDescriptor, 1, blob->GetBufferPointer(), blob->GetBufferSize(), inputLayout.GetAddressOf());
+    wrl::ComPtr<ID3D11InputLayout> inputLayout;
+    const D3D11_INPUT_ELEMENT_DESC elementDescriptor[] = {
+        {"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 2, D3D11_INPUT_PER_VERTEX_DATA, 0}
+    };
+
+    device->CreateInputLayout(elementDescriptor, std::size(elementDescriptor), blob->GetBufferPointer(), blob->GetBufferSize(), inputLayout.GetAddressOf());
     deviceContext->IASetInputLayout(inputLayout.Get());
 
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3D11_VIEWPORT viewport;
     viewport.Width = width;
@@ -109,5 +111,5 @@ void Pipeline::draw() {
     deviceContext->OMSetRenderTargets(1, renderTarget.GetAddressOf(), nullptr);
     deviceContext->RSSetViewports(1, &viewport);
 
-    deviceContext->Draw(6, 0);
+    deviceContext->Draw(std::size(vertices), 0);
 }
