@@ -33,15 +33,13 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
         &deviceContext
     );
 
-    ID3D11Resource* backBuffer = nullptr;
-    swapchain->GetBuffer(0, __uuidof(ID3D11Resource), (void**)(&backBuffer));
+    wrl::ComPtr<ID3D11Resource> backBuffer;
+    swapchain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer);
     device->CreateRenderTargetView(
-        backBuffer,
+        backBuffer.Get(),
         nullptr,
         &renderTarget
     );
-
-    backBuffer->Release();
 }
 
  void Pipeline::presentBuffer() {
@@ -64,7 +62,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     };
 
     ID3D11Buffer* vertexBuffer;
-    D3D11_BUFFER_DESC bufferDescriptor{};
+    D3D11_BUFFER_DESC bufferDescriptor = {};
     bufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     bufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
     bufferDescriptor.CPUAccessFlags = NULL;
@@ -72,7 +70,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     bufferDescriptor.ByteWidth = sizeof(vertices);
     bufferDescriptor.StructureByteStride = sizeof(Point);
 
-    D3D11_SUBRESOURCE_DATA subresourceData{};
+    D3D11_SUBRESOURCE_DATA subresourceData = {};
     subresourceData.pSysMem = vertices;
 
     device->CreateBuffer(&bufferDescriptor, &subresourceData, &vertexBuffer);
@@ -80,24 +78,24 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     const uint offset = 0;
     deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 
-    ID3D11InputLayout* inputLayout;
+    wrl::ComPtr<ID3D11InputLayout> inputLayout;
     const D3D11_INPUT_ELEMENT_DESC elementDescriptor[] = {
         {"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
 
-    ID3DBlob* blob;
-    ID3D11PixelShader* pixelShader;
+    wrl::ComPtr<ID3DBlob> blob;
+    wrl::ComPtr<ID3D11PixelShader> pixelShader;
     D3DReadFileToBlob(L"shader/pixel.cso", &blob);
     device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pixelShader);
-    deviceContext->PSSetShader(pixelShader, nullptr, NULL);
+    deviceContext->PSSetShader(pixelShader.Get(), nullptr, NULL);
 
-    ID3D11VertexShader* vertexShader;
+    wrl::ComPtr<ID3D11VertexShader> vertexShader;
     D3DReadFileToBlob(L"shader/vertex.cso", &blob);
     device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vertexShader);
-    deviceContext->VSSetShader(vertexShader, nullptr, NULL);
+    deviceContext->VSSetShader(vertexShader.Get(), nullptr, NULL);
 
     device->CreateInputLayout(elementDescriptor, 1, blob->GetBufferPointer(), blob->GetBufferSize(), &inputLayout);
-    deviceContext->IASetInputLayout(inputLayout);
+    deviceContext->IASetInputLayout(inputLayout.Get());
 
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

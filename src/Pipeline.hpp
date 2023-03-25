@@ -5,30 +5,26 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+namespace wrl = Microsoft::WRL;
+
 class Pipeline {
 public:
     Pipeline(HWND hWnd, int width, int height);
     Pipeline(const Pipeline&) = delete;
     Pipeline& operator=(const Pipeline&) = delete;
-    ~Pipeline() { 
-        if (device) device->Release();
-        if (swapchain) swapchain->Release();
-        if (deviceContext) deviceContext->Release();
-        if (renderTarget) renderTarget->Release();
-    }
 
     void presentBuffer();
     void clearBuffer(Color color) {
-        deviceContext->ClearRenderTargetView(renderTarget, color.data);
+        deviceContext->ClearRenderTargetView(renderTarget.Get(), color.data);
     }
 
     void draw();
 
 private:
-    ID3D11Device* device = nullptr;
-    IDXGISwapChain* swapchain = nullptr;
-    ID3D11DeviceContext* deviceContext = nullptr;
-    ID3D11RenderTargetView* renderTarget = nullptr;
+    wrl::ComPtr<ID3D11Device>           device;
+    wrl::ComPtr<IDXGISwapChain>         swapchain;
+    wrl::ComPtr<ID3D11DeviceContext>    deviceContext;
+    wrl::ComPtr<ID3D11RenderTargetView> renderTarget;
 
     int width, height;
 };
