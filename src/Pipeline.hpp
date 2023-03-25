@@ -1,11 +1,13 @@
 #pragma once
 #include "Windows.hpp"
-#include <d3d11.h>
 #include "Graphics.hpp"
+
+#include <d3d11.h>
+#include <d3dcompiler.h>
 
 class Pipeline {
 public:
-    Pipeline(HWND hWnd);
+    Pipeline(HWND hWnd, int width, int height);
     Pipeline(const Pipeline&) = delete;
     Pipeline& operator=(const Pipeline&) = delete;
     ~Pipeline() { 
@@ -20,9 +22,13 @@ public:
         deviceContext->ClearRenderTargetView(renderTarget, color.data);
     }
 
+    void draw();
+
 private:
     ID3D11Device* device = nullptr;
     IDXGISwapChain* swapchain = nullptr;
     ID3D11DeviceContext* deviceContext = nullptr;
     ID3D11RenderTargetView* renderTarget = nullptr;
+
+    int width, height;
 };

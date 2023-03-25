@@ -21,7 +21,8 @@ void Cinq::update() {
     sprintf(buf, "%s (%.2fms since last frame)", title, t*1000); 
     window.setTitle(buf);
 
-    window.getGraphicsPipeline().clearBuffer(Color::random(1.f));
+    window.getGraphicsPipeline().clearBuffer({.1f, .1f, .1f, .1f});
+    window.getGraphicsPipeline().draw();
     window.getGraphicsPipeline().presentBuffer();
 
     // Can now be removed because presentBuffer() handles the blocking.

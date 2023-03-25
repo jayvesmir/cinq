@@ -13,6 +13,28 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "/O2 /MT /MP /EHsc")
 endif()
 
+# build HLSL shaders
+# build directory is kinda nonsensical
+add_custom_target(shaders)
+set(SHADER_DIR src/shader)
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/shader)
+set(SHADERS ${SHADER_DIR}/vertex.hlsl ${SHADER_DIR}/pixel.hlsl)
+set_source_files_properties(${SHADER_DIR}/vertex.hlsl PROPERTIES shaderType "vs")
+set_source_files_properties(${SHADER_DIR}/pixel.hlsl PROPERTIES shaderType "ps")
+set_source_files_properties(${SHADERS} PROPERTIES shaderModel "4_0")
+
+foreach(FILE ${SHADERS})
+  get_filename_component(FILE_WE ${FILE} NAME_WE)
+  get_source_file_property(shadertype ${FILE} shaderType)
+  get_source_file_property(shadermodel ${FILE} shaderModel)
+  add_custom_command(TARGET shaders
+                     COMMAND fxc.exe /nologo /Emain /T${shadertype}_${shadermodel} /O2 /Zi /Fo ${CMAKE_SOURCE_DIR}/shader/${FILE_WE}.cso ${FILE}
+                     MAIN_DEPENDENCY ${FILE}
+                     COMMENT "HLSL ${FILE}"
+                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                     VERBATIM)
+endforeach(FILE)
+
 add_executable(
     ${PROJECT_NAME}
     WIN32
@@ -27,8 +49,14 @@ add_executable(
     src/Exception.cpp
 )
 
+add_dependencies(
+    ${PROJECT_NAME}
+    shaders
+)
+
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
-    d3d11.lib
+    d3d11
+    d3dcompiler
 )

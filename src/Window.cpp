@@ -56,7 +56,7 @@ Window::Window(int width, int height, const char* title)
 
     ShowWindow(hWnd, SW_SHOWDEFAULT);
 
-    pipeline = std::make_unique<Pipeline>(hWnd);
+    pipeline = std::make_unique<Pipeline>(hWnd, width, height);
 }
 
 void Window::setTitle(const char* title) {
