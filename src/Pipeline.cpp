@@ -42,11 +42,11 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     );
 }
 
- void Pipeline::presentBuffer() {
+void Pipeline::presentBuffer() {
     swapchain->Present(1, NULL);
- }
+}
 
- void Pipeline::draw() {
+void Pipeline::draw() {
     struct Point {
         float x, y;
     };
@@ -97,7 +97,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     device->CreateInputLayout(elementDescriptor, 1, blob->GetBufferPointer(), blob->GetBufferSize(), inputLayout.GetAddressOf());
     deviceContext->IASetInputLayout(inputLayout.Get());
 
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
     D3D11_VIEWPORT viewport;
     viewport.Width = width;
