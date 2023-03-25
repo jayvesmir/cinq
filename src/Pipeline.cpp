@@ -27,10 +27,10 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
         0,
         D3D11_SDK_VERSION,
         &swapchainDesc,
-        &swapchain,
-        &device,
+        swapchain.GetAddressOf(),
+        device.GetAddressOf(),
         nullptr,
-        &deviceContext
+        deviceContext.GetAddressOf()
     );
 
     wrl::ComPtr<ID3D11Resource> backBuffer = nullptr;
@@ -73,7 +73,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     D3D11_SUBRESOURCE_DATA subresourceData{};
     subresourceData.pSysMem = vertices;
 
-    device->CreateBuffer(&bufferDescriptor, &subresourceData, &vertexBuffer);
+    device->CreateBuffer(&bufferDescriptor, &subresourceData, vertexBuffer.GetAddressOf());
     const uint stride = sizeof(Point);
     const uint offset = 0;
     deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
@@ -86,15 +86,15 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     wrl::ComPtr<ID3DBlob> blob;
     wrl::ComPtr<ID3D11PixelShader> pixelShader;
     D3DReadFileToBlob(L"shader/pixel.cso", &blob);
-    device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &pixelShader);
+    device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pixelShader.GetAddressOf());
     deviceContext->PSSetShader(pixelShader.Get(), nullptr, NULL);
 
     wrl::ComPtr<ID3D11VertexShader> vertexShader;
     D3DReadFileToBlob(L"shader/vertex.cso", &blob);
-    device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, &vertexShader);
+    device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, vertexShader.GetAddressOf());
     deviceContext->VSSetShader(vertexShader.Get(), nullptr, NULL);
 
-    device->CreateInputLayout(elementDescriptor, 1, blob->GetBufferPointer(), blob->GetBufferSize(), &inputLayout);
+    device->CreateInputLayout(elementDescriptor, 1, blob->GetBufferPointer(), blob->GetBufferSize(), inputLayout.GetAddressOf());
     deviceContext->IASetInputLayout(inputLayout.Get());
 
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -106,7 +106,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     viewport.MaxDepth = 1;
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
-    deviceContext->OMSetRenderTargets(1, &renderTarget, nullptr);
+    deviceContext->OMSetRenderTargets(1, renderTarget.GetAddressOf(), nullptr);
     deviceContext->RSSetViewports(1, &viewport);
 
     deviceContext->Draw(6, 0);
