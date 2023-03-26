@@ -7,9 +7,9 @@ cbuffer constantBuffer {
     matrix transform;
 };
 
-VertexOut main(float2 pos : Position, float3 color : Color) {
+VertexOut main(float3 pos : Position, float3 color : Color) {
     VertexOut o;
-    o.pos = mul(float4(pos.x, pos.y, 0, 1), transform);
+    o.pos = mul(float4(pos, 1), transform);
     o.color = color;
     return o;
 }

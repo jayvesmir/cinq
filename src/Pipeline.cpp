@@ -51,36 +51,48 @@ void Pipeline::presentBuffer() {
 
 // Most of this is temporary test code :)
 void Pipeline::draw(float time, float x, float y) {
-    struct Point {
-        float x, y;
+    struct Vertex {
+        float x, y, z;
         float r, g, b;
     };
 
-    Point vertices[] = {
-        { .5f,  .5f, 1.f, 1.f, 0.f}, // top-right
-        { .5f, -.5f, 1.f, 0.f, 0.f}, // bottom-right
-        {-.5f, -.5f, 0.f, 0.f, 1.f}, // bottom-left
-        {-.5f,  .5f, 0.f, 1.f, 0.f}, // top-left
+    Vertex vertices[] = {
+    //  Position             Color
+        {-1.f, -1.f, -1.f,   1.f, 0.f, 0.f},
+        { 1.f, -1.f, -1.f,   0.f, 1.f, 0.f},
+        {-1.f,  1.f, -1.f,   0.f, 0.f, 1.f},
+        {-1.f, -1.f,  1.f,   1.f, 0.f, 1.f},
+        { 1.f,  1.f, -1.f,   1.f, 1.f, 0.f},
+        { 1.f, -1.f,  1.f,   0.f, 1.f, 1.f},
+        {-1.f,  1.f,  1.f,   0.f, 0.f, 0.f},
+        { 1.f,  1.f,  1.f,   1.f, 1.f, 1.f}
     };
 
     uint16_t indices[] = {
-        0, 1, 2,
-        3, 0, 2
+        0, 2, 1,   2, 4, 1,
+        1, 4, 5,   4, 7, 5,
+        2, 6, 4,   4, 6, 7,
+        3, 5, 7,   3, 7, 6,
+        0, 3, 2,   2, 3, 6,
+        0, 1, 3,   1, 5, 3
     };
 
     struct ConstantBuffer {
         DirectX::XMMATRIX tranform;
     };
 
-    float angle = time * 2;
+    float angle = time * 1.5f;
     float aspectRatio = height / (float)width;
 
     ConstantBuffer tranformBuffer = {
         {
-            DirectX::XMMatrixTranspose(                           // Transpose matrix into column major
-                DirectX::XMMatrixRotationZ(angle)               * // Rotate square along Z
-                DirectX::XMMatrixScaling(aspectRatio, 1.f, 1.f) * // Correct for non-square resolutions
-                DirectX::XMMatrixTranslation(x, -y, .0f)          // Move the square to x, y
+            DirectX::XMMatrixTranspose(                                       // Transpose matrix into column major
+                DirectX::XMMatrixRotationZ(angle)                           * // Rotate square along Z
+                DirectX::XMMatrixRotationX(angle)                           * // Rotate square along X
+                DirectX::XMMatrixRotationY(angle)                           * // Rotate square along Y
+                DirectX::XMMatrixTranslation(.0f, .0f, 6.f)                 * // Move the square in front of the camera
+                DirectX::XMMatrixPerspectiveLH(1.f, aspectRatio, .5f, 10.f) * // Perspective magic
+                DirectX::XMMatrixTranslation(x, -y, 0.f)                      // Move the square to x, y
             )
         }
     };
@@ -93,7 +105,7 @@ void Pipeline::draw(float time, float x, float y) {
     vertexBufferDescriptor.CPUAccessFlags = NULL;
     vertexBufferDescriptor.MiscFlags = NULL;
     vertexBufferDescriptor.ByteWidth = sizeof(vertices);
-    vertexBufferDescriptor.StructureByteStride = sizeof(Point);
+    vertexBufferDescriptor.StructureByteStride = sizeof(Vertex);
 
     D3D11_SUBRESOURCE_DATA vertexSubresourceData{};
     vertexSubresourceData.pSysMem = vertices;
@@ -133,7 +145,7 @@ void Pipeline::draw(float time, float x, float y) {
     deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
     // Bind vertex buffer
-    const uint stride = sizeof(Point);
+    const uint stride = sizeof(Vertex);
     const uint offset = 0;
     deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
@@ -154,8 +166,8 @@ void Pipeline::draw(float time, float x, float y) {
 
     wrl::ComPtr<ID3D11InputLayout> inputLayout;
     const D3D11_INPUT_ELEMENT_DESC elementDescriptor[] = {
-        {"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 2, D3D11_INPUT_PER_VERTEX_DATA, 0}
+        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
 
     device->CreateInputLayout(elementDescriptor, std::size(elementDescriptor), blob->GetBufferPointer(), blob->GetBufferSize(), inputLayout.GetAddressOf());
