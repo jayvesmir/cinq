@@ -19,7 +19,10 @@ void Cinq::update() {
     float t = timer.markLap();
 
     window.getGraphicsPipeline().clearBuffer({.1f, .1f, .1f, .1f});
-    window.getGraphicsPipeline().draw(timer.sinceStart());
+
+    float x = window.mouse.X() / ((float)width / 2) - 1.f;  // Squish mouse position to -1..1
+    float y = window.mouse.Y() / ((float)height / 2) - 1.f; // Squish mouse position to -1..1
+    window.getGraphicsPipeline().draw(timer.sinceStart(), x, y);
 
     float t1 = timer.sinceLastLap();
     char buf[128];
@@ -30,6 +33,6 @@ void Cinq::update() {
     // Can now be removed because presentBuffer() handles the blocking.
     // I'm still keeping it just in case something else makes windows cry again
     // and I won't remember how to calm it down.
-    /* Sleep for 1 millisecond to prevent Windows from shitting itself from too many window renames
-    timer.wait(1); */
+    // Sleep for 1 millisecond to prevent Windows from shitting itself from too many window renames
+    // timer.wait(1);
 }

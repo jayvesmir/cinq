@@ -45,3 +45,6 @@ typedef uint32_t uint;
 
 #include <Windows.h>
 #include <wrl/client.h>
+
+// Come and kill me
+namespace wrl = Microsoft::WRL;

@@ -2,6 +2,7 @@
 
 Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(height){
     DXGI_SWAP_CHAIN_DESC swapchainDesc{};
+    // Front & Back buffer settings
     swapchainDesc.BufferDesc.Width = 0;
     swapchainDesc.BufferDesc.Height = 0;
     swapchainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -9,10 +10,12 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     swapchainDesc.BufferDesc.RefreshRate.Denominator = 0;
     swapchainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
     swapchainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-    swapchainDesc.SampleDesc.Count = 1;
-    swapchainDesc.SampleDesc.Quality = 0;
     swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapchainDesc.BufferCount = 1;
+    // Anti-aliasing settings
+    swapchainDesc.SampleDesc.Count = 8;
+    swapchainDesc.SampleDesc.Quality = DXGI_STANDARD_MULTISAMPLE_QUALITY_PATTERN;
+    // Other Settings
     swapchainDesc.OutputWindow = hWnd;
     swapchainDesc.Windowed = TRUE;
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -33,7 +36,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
         deviceContext.GetAddressOf()
     );
 
-    wrl::ComPtr<ID3D11Resource> backBuffer = nullptr;
+    wrl::ComPtr<ID3D11Resource> backBuffer;
     swapchain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer);
     device->CreateRenderTargetView(
         backBuffer.Get(),
@@ -47,15 +50,15 @@ void Pipeline::presentBuffer() {
 }
 
 // Most of this is temporary test code :)
-void Pipeline::draw(float time) {
+void Pipeline::draw(float time, float x, float y) {
     struct Point {
         float x, y;
         float r, g, b;
     };
 
     Point vertices[] = {
-        { .5f,  .5f, 1.f, 0.f, 0.f}, // top-right
-        { .5f, -.5f, 0.f, 1.f, 0.f}, // bottom-right
+        { .5f,  .5f, 1.f, 1.f, 0.f}, // top-right
+        { .5f, -.5f, 1.f, 0.f, 0.f}, // bottom-right
         {-.5f, -.5f, 0.f, 0.f, 1.f}, // bottom-left
         {-.5f,  .5f, 0.f, 1.f, 0.f}, // top-left
     };
@@ -66,19 +69,19 @@ void Pipeline::draw(float time) {
     };
 
     struct ConstantBuffer {
-        struct {
-            float matrix[4][4];
-        } transform;
+        DirectX::XMMATRIX tranform;
     };
 
-    float angle = time;
+    float angle = time * 2;
+    float aspectRatio = height / (float)width;
 
     ConstantBuffer tranformBuffer = {
         {
-            (height / (float)width)* cosf(angle), sinf(angle), .0f, .0f,
-            (height / (float)width)*-sinf(angle), cosf(angle), .0f, .0f,
-            .0f                          , .0f        , 1.f, .0f,
-            .0f                          , .0f        , .0f, 1.f,
+            DirectX::XMMatrixTranspose(                           // Transpose matrix into column major
+                DirectX::XMMatrixRotationZ(angle)               * // Rotate square along Z
+                DirectX::XMMatrixScaling(aspectRatio, 1.f, 1.f) * // Correct for non-square resolutions
+                DirectX::XMMatrixTranslation(x, -y, .0f)          // Move the square to x, y
+            )
         }
     };
 

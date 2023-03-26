@@ -2,11 +2,10 @@
 #include "Windows.hpp"
 #include "Graphics.hpp"
 
+#include <list>
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include <list>
-
-namespace wrl = Microsoft::WRL;
+#include <DirectXMath.h>
 
 class Pipeline {
 public:
@@ -19,7 +18,7 @@ public:
         deviceContext->ClearRenderTargetView(renderTarget.Get(), color.data);
     }
 
-    void draw(float time);
+    void draw(float time, float x, float y);
 
 private:
     wrl::ComPtr<ID3D11Device> device = nullptr;
