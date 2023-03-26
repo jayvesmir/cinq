@@ -114,18 +114,17 @@ void Pipeline::draw(float time, float x, float y) {
         0, 1, 3,   1, 5, 3
     };
 
-    // Both of these are constant buffers
-    struct TransformBuffer {
+    struct TransformCBuffer {
         DirectX::XMMATRIX transform;
     };
 
-    struct ColorBuffer {
+    struct ColorCBuffer {
         struct {
             float r, g, b, a;
         } faceColors[6];
     };
 
-    ColorBuffer colorBuffer = {
+    ColorCBuffer colorCBuffer = {
         {
             {.2f, .2f, .2f},
             {.4f, .4f, .4f},
@@ -139,7 +138,7 @@ void Pipeline::draw(float time, float x, float y) {
     float angle = time * 1.5f;
     float aspectRatio = height / (float)width;
 
-    TransformBuffer tranformBuffer = {
+    TransformCBuffer tranformCBuffer = {
         {
             DirectX::XMMatrixTranspose(                                       // Transpose matrix into column major
                 DirectX::XMMatrixRotationZ(angle)                           * // Rotate square along Z
@@ -185,11 +184,11 @@ void Pipeline::draw(float time, float x, float y) {
     transformConstantBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
     transformConstantBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     transformConstantBufferDescriptor.MiscFlags = NULL;
-    transformConstantBufferDescriptor.ByteWidth = sizeof(tranformBuffer);
+    transformConstantBufferDescriptor.ByteWidth = sizeof(tranformCBuffer);
     transformConstantBufferDescriptor.StructureByteStride = 0;
 
     D3D11_SUBRESOURCE_DATA transformConstantSubresourceData{};
-    transformConstantSubresourceData.pSysMem = &tranformBuffer;
+    transformConstantSubresourceData.pSysMem = &tranformCBuffer;
 
     wrl::ComPtr<ID3D11Buffer> colorConstantBuffer;
     D3D11_BUFFER_DESC colorConstantBufferDescriptor{};
@@ -197,11 +196,11 @@ void Pipeline::draw(float time, float x, float y) {
     colorConstantBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
     colorConstantBufferDescriptor.CPUAccessFlags = NULL;
     colorConstantBufferDescriptor.MiscFlags = NULL;
-    colorConstantBufferDescriptor.ByteWidth = sizeof(colorBuffer);
+    colorConstantBufferDescriptor.ByteWidth = sizeof(colorCBuffer);
     colorConstantBufferDescriptor.StructureByteStride = 0;
 
     D3D11_SUBRESOURCE_DATA colorConstantSubresourceData{};
-    colorConstantSubresourceData.pSysMem = &colorBuffer;
+    colorConstantSubresourceData.pSysMem = &colorCBuffer;
 
     // Create the buffers but in a different kinda way ykwim
     device->CreateBuffer(&vertexBufferDescriptor, &vertexSubresourceData, vertexBuffer.GetAddressOf());
