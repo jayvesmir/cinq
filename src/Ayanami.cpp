@@ -4,8 +4,8 @@
 #include "Exception.hpp"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdShow) { 
-    const float aspectRatio = 16/9.;
-    const int   width       = 1440;
+    const float aspectRatio = 1;
+    const int   width       = 800;
     const int   height      = width / aspectRatio;
 
     Cinq cinq(width, height, "Cinq");

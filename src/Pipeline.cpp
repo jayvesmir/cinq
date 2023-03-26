@@ -46,21 +46,18 @@ void Pipeline::presentBuffer() {
     swapchain->Present(1, NULL);
 }
 
+// Most of this is temporary test code :)
 void Pipeline::draw(float time) {
     struct Point {
         float x, y;
         float r, g, b;
     };
 
-    float c = sinf(time) / 2.f;
-    float cc = cosf(time) / 2.f;
-
     Point vertices[] = {
-        { .5f,  .5f, 1.f, c, cc}, // top-right
-        { .5f, -.5f, cc, 1.f, c}, // bottom-right
-        {-.5f, -.5f, c, cc, 1.f}, // bottom-left
-
-        {-.5f,  .5f, c, 1.f, cc}, // top-left
+        { .5f,  .5f, 1.f, 0.f, 0.f}, // top-right
+        { .5f, -.5f, 0.f, 1.f, 0.f}, // bottom-right
+        {-.5f, -.5f, 0.f, 0.f, 1.f}, // bottom-left
+        {-.5f,  .5f, 0.f, 1.f, 0.f}, // top-left
     };
 
     uint16_t indices[] = {
@@ -68,6 +65,24 @@ void Pipeline::draw(float time) {
         3, 0, 2
     };
 
+    struct ConstantBuffer {
+        struct {
+            float matrix[4][4];
+        } transform;
+    };
+
+    float angle = time;
+
+    ConstantBuffer tranformBuffer = {
+        {
+            cosf(angle), sinf(angle), .0f, .0f,
+           -sinf(angle), cosf(angle), .0f, .0f,
+            .0f        , .0f        , 1.f, .0f,
+            .0f        , .0f        , .0f, 1.f,
+        }
+    };
+
+    // Create vertex buffer
     wrl::ComPtr<ID3D11Buffer> vertexBuffer;
     D3D11_BUFFER_DESC vertexBufferDescriptor{};
     vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -80,6 +95,7 @@ void Pipeline::draw(float time) {
     D3D11_SUBRESOURCE_DATA vertexSubresourceData{};
     vertexSubresourceData.pSysMem = vertices;
 
+    // Create index buffer
     wrl::ComPtr<ID3D11Buffer> indexBuffer;
     D3D11_BUFFER_DESC indexBufferDescriptor{};
     indexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -92,8 +108,23 @@ void Pipeline::draw(float time) {
     D3D11_SUBRESOURCE_DATA indexSubresourceData{};
     indexSubresourceData.pSysMem = indices;
 
+    // Create constant buffer
+    wrl::ComPtr<ID3D11Buffer> constantBuffer;
+    D3D11_BUFFER_DESC constantBufferDescriptor{};
+    constantBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    constantBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
+    constantBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    constantBufferDescriptor.MiscFlags = NULL;
+    constantBufferDescriptor.ByteWidth = sizeof(tranformBuffer);
+    constantBufferDescriptor.StructureByteStride = 0;
+
+    D3D11_SUBRESOURCE_DATA constantSubresourceData{};
+    constantSubresourceData.pSysMem = &tranformBuffer;
+
+    // Create the buffers but in a different kinda way ykwim
     device->CreateBuffer(&vertexBufferDescriptor, &vertexSubresourceData, vertexBuffer.GetAddressOf());
     device->CreateBuffer(&indexBufferDescriptor, &indexSubresourceData, indexBuffer.GetAddressOf());
+    device->CreateBuffer(&constantBufferDescriptor, &constantSubresourceData, constantBuffer.GetAddressOf());
 
     // Bind index buffer
     deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
@@ -103,6 +134,10 @@ void Pipeline::draw(float time) {
     const uint offset = 0;
     deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
+    // Bind constant buffer
+    deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+
+    // Read & Set shaders
     wrl::ComPtr<ID3DBlob> blob;
     wrl::ComPtr<ID3D11PixelShader> pixelShader;
     D3DReadFileToBlob(L"shader/pixel.cso", &blob);
