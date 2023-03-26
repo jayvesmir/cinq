@@ -78,7 +78,7 @@ void Pipeline::draw(float time, float x, float y) {
     };
 
     struct ConstantBuffer {
-        DirectX::XMMATRIX tranform;
+        DirectX::XMMATRIX transform;
     };
 
     float angle = time * 1.5f;
