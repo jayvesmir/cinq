@@ -16,15 +16,17 @@ public:
     void presentBuffer();
     void clearBuffer(Color color) {
         deviceContext->ClearRenderTargetView(renderTarget.Get(), color.data);
+        deviceContext->ClearDepthStencilView(depthView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
     }
 
     void draw(float time, float x, float y);
 
 private:
-    wrl::ComPtr<ID3D11Device> device = nullptr;
-    wrl::ComPtr<IDXGISwapChain> swapchain = nullptr;
-    wrl::ComPtr<ID3D11DeviceContext> deviceContext = nullptr;
-    wrl::ComPtr<ID3D11RenderTargetView> renderTarget = nullptr;
-
     int width, height;
+    
+    wrl::ComPtr<ID3D11Device> device;
+    wrl::ComPtr<IDXGISwapChain> swapchain;
+    wrl::ComPtr<ID3D11DepthStencilView> depthView;
+    wrl::ComPtr<ID3D11DeviceContext> deviceContext;
+    wrl::ComPtr<ID3D11RenderTargetView> renderTarget;
 };
