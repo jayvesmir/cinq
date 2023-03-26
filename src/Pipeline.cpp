@@ -46,42 +46,42 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     );
 
     // Create depth stensil state
-	D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor{};
-	depthStencilDescriptor.DepthEnable = TRUE;
-	depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS;
-	wrl::ComPtr<ID3D11DepthStencilState> depthStencilState;
-	device->CreateDepthStencilState(&depthStencilDescriptor, &depthStencilState);
+    D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor{};
+    depthStencilDescriptor.DepthEnable = TRUE;
+    depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS;
+    wrl::ComPtr<ID3D11DepthStencilState> depthStencilState;
+    device->CreateDepthStencilState(&depthStencilDescriptor, &depthStencilState);
 
-	// Bind depth state
-	deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
+    // Bind depth state
+    deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
 
-	// Create depth stencil texture
-	wrl::ComPtr<ID3D11Texture2D> depthStencil;
-	D3D11_TEXTURE2D_DESC depthTextureDescriptor{};
-	depthTextureDescriptor.Width = width;
-	depthTextureDescriptor.Height = height;
-	depthTextureDescriptor.MipLevels = 1;
-	depthTextureDescriptor.ArraySize = 1;
-	depthTextureDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
-	depthTextureDescriptor.SampleDesc.Count = 1;
-	depthTextureDescriptor.SampleDesc.Quality = 0;
-	depthTextureDescriptor.Usage = D3D11_USAGE_DEFAULT;
-	depthTextureDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	device->CreateTexture2D(&depthTextureDescriptor, nullptr, &depthStencil);
+    // Create depth stencil texture
+    wrl::ComPtr<ID3D11Texture2D> depthStencil;
+    D3D11_TEXTURE2D_DESC depthTextureDescriptor{};
+    depthTextureDescriptor.Width = width;
+    depthTextureDescriptor.Height = height;
+    depthTextureDescriptor.MipLevels = 1;
+    depthTextureDescriptor.ArraySize = 1;
+    depthTextureDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
+    depthTextureDescriptor.SampleDesc.Count = 1;
+    depthTextureDescriptor.SampleDesc.Quality = 0;
+    depthTextureDescriptor.Usage = D3D11_USAGE_DEFAULT;
+    depthTextureDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    device->CreateTexture2D(&depthTextureDescriptor, nullptr, &depthStencil);
 
-	// Create depth stencil
-	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor{};
-	depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
-	depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	depthStencilViewDescriptor.Texture2D.MipSlice = 0;
-	device->CreateDepthStencilView(
-		depthStencil.Get(),
+    // Create depth stencil
+    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor{};
+    depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
+    depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    depthStencilViewDescriptor.Texture2D.MipSlice = 0;
+    device->CreateDepthStencilView(
+    	depthStencil.Get(),
         &depthStencilViewDescriptor,
         &depthView
-	);
+    );
 
-	deviceContext->OMSetRenderTargets(1, renderTarget.GetAddressOf(), depthView.Get());
+    deviceContext->OMSetRenderTargets(1, renderTarget.GetAddressOf(), depthView.Get());
 }
 
 void Pipeline::presentBuffer() {

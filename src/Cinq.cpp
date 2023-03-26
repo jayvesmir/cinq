@@ -24,7 +24,6 @@ void Cinq::update() {
     float y = window.mouse.Y() / ((float)height / 2) - 1.f; // Squish mouse position to -1..1
 
     window.getGraphicsPipeline().draw(timer.sinceStart(), x, y);
-    window.getGraphicsPipeline().draw(-timer.sinceStart(), 0.f, 0.f);
 
     float t1 = timer.sinceLastLap();
     char buf[128];
