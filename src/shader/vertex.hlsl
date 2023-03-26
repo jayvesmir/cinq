@@ -4,7 +4,7 @@ struct VertexOut {
 };
 
 cbuffer constantBuffer {
-    matrix transform;
+    row_major matrix transform;
 };
 
 VertexOut main(float2 pos : Position, float3 color : Color) {

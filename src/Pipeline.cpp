@@ -75,10 +75,10 @@ void Pipeline::draw(float time) {
 
     ConstantBuffer tranformBuffer = {
         {
-            cosf(angle), sinf(angle), .0f, .0f,
-           -sinf(angle), cosf(angle), .0f, .0f,
-            .0f        , .0f        , 1.f, .0f,
-            .0f        , .0f        , .0f, 1.f,
+            (height / (float)width)* cosf(angle), sinf(angle), .0f, .0f,
+            (height / (float)width)*-sinf(angle), cosf(angle), .0f, .0f,
+            .0f                          , .0f        , 1.f, .0f,
+            .0f                          , .0f        , .0f, 1.f,
         }
     };
 
