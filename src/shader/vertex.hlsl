@@ -1,15 +1,7 @@
-struct VertexOut {
-    float3 color : Color;
-    float4 pos : SV_Position;
-};
-
-cbuffer constantBuffer {
+cbuffer transformCBuffer {
     matrix transform;
 };
 
-VertexOut main(float3 pos : Position, float3 color : Color) {
-    VertexOut o;
-    o.pos = mul(float4(pos, 1), transform);
-    o.color = color;
-    return o;
+float4 main(float3 pos : Position) : SV_Position {
+    return mul(float4(pos, 1), transform);
 }

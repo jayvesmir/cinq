@@ -51,21 +51,19 @@ void Pipeline::presentBuffer() {
 
 // Most of this is temporary test code :)
 void Pipeline::draw(float time, float x, float y) {
-    struct Vertex {
+    struct Point {
         float x, y, z;
-        float r, g, b;
     };
 
-    Vertex vertices[] = {
-    //  Position             Color
-        {-1.f, -1.f, -1.f,   1.f, 0.f, 0.f},
-        { 1.f, -1.f, -1.f,   0.f, 1.f, 0.f},
-        {-1.f,  1.f, -1.f,   0.f, 0.f, 1.f},
-        {-1.f, -1.f,  1.f,   1.f, 0.f, 1.f},
-        { 1.f,  1.f, -1.f,   1.f, 1.f, 0.f},
-        { 1.f, -1.f,  1.f,   0.f, 1.f, 1.f},
-        {-1.f,  1.f,  1.f,   0.f, 0.f, 0.f},
-        { 1.f,  1.f,  1.f,   1.f, 1.f, 1.f}
+    Point vertices[] = {
+        {-1.f, -1.f, -1.f},
+        { 1.f, -1.f, -1.f},
+        {-1.f,  1.f, -1.f},
+        {-1.f, -1.f,  1.f},
+        { 1.f,  1.f, -1.f},
+        { 1.f, -1.f,  1.f},
+        {-1.f,  1.f,  1.f},
+        { 1.f,  1.f,  1.f}
     };
 
     uint16_t indices[] = {
@@ -77,14 +75,32 @@ void Pipeline::draw(float time, float x, float y) {
         0, 1, 3,   1, 5, 3
     };
 
-    struct ConstantBuffer {
+    // Both of these are constant buffers
+    struct TransformBuffer {
         DirectX::XMMATRIX transform;
+    };
+
+    struct ColorBuffer {
+        struct {
+            float r, g, b, a;
+        } faceColors[6];
+    };
+
+    ColorBuffer colorBuffer = {
+        {
+            {.2f, .2f, .2f},
+            {.4f, .4f, .4f},
+            {.5f, .5f, .5f},
+            {.7f, .7f, .7f},
+            {.8f, .8f, .8f},
+            {.9f, .9f, .9f},
+        }
     };
 
     float angle = time * 1.5f;
     float aspectRatio = height / (float)width;
 
-    ConstantBuffer tranformBuffer = {
+    TransformBuffer tranformBuffer = {
         {
             DirectX::XMMatrixTranspose(                                       // Transpose matrix into column major
                 DirectX::XMMatrixRotationZ(angle)                           * // Rotate square along Z
@@ -105,7 +121,7 @@ void Pipeline::draw(float time, float x, float y) {
     vertexBufferDescriptor.CPUAccessFlags = NULL;
     vertexBufferDescriptor.MiscFlags = NULL;
     vertexBufferDescriptor.ByteWidth = sizeof(vertices);
-    vertexBufferDescriptor.StructureByteStride = sizeof(Vertex);
+    vertexBufferDescriptor.StructureByteStride = sizeof(Point);
 
     D3D11_SUBRESOURCE_DATA vertexSubresourceData{};
     vertexSubresourceData.pSysMem = vertices;
@@ -123,34 +139,48 @@ void Pipeline::draw(float time, float x, float y) {
     D3D11_SUBRESOURCE_DATA indexSubresourceData{};
     indexSubresourceData.pSysMem = indices;
 
-    // Create constant buffer
-    wrl::ComPtr<ID3D11Buffer> constantBuffer;
-    D3D11_BUFFER_DESC constantBufferDescriptor{};
-    constantBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    constantBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
-    constantBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    constantBufferDescriptor.MiscFlags = NULL;
-    constantBufferDescriptor.ByteWidth = sizeof(tranformBuffer);
-    constantBufferDescriptor.StructureByteStride = 0;
+    // Create constant buffers
+    wrl::ComPtr<ID3D11Buffer> tranformConstantBuffer;
+    D3D11_BUFFER_DESC transformConstantBufferDescriptor{};
+    transformConstantBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    transformConstantBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
+    transformConstantBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    transformConstantBufferDescriptor.MiscFlags = NULL;
+    transformConstantBufferDescriptor.ByteWidth = sizeof(tranformBuffer);
+    transformConstantBufferDescriptor.StructureByteStride = 0;
 
-    D3D11_SUBRESOURCE_DATA constantSubresourceData{};
-    constantSubresourceData.pSysMem = &tranformBuffer;
+    D3D11_SUBRESOURCE_DATA transformConstantSubresourceData{};
+    transformConstantSubresourceData.pSysMem = &tranformBuffer;
+
+    wrl::ComPtr<ID3D11Buffer> colorConstantBuffer;
+    D3D11_BUFFER_DESC colorConstantBufferDescriptor{};
+    colorConstantBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    colorConstantBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
+    colorConstantBufferDescriptor.CPUAccessFlags = NULL;
+    colorConstantBufferDescriptor.MiscFlags = NULL;
+    colorConstantBufferDescriptor.ByteWidth = sizeof(colorBuffer);
+    colorConstantBufferDescriptor.StructureByteStride = 0;
+
+    D3D11_SUBRESOURCE_DATA colorConstantSubresourceData{};
+    colorConstantSubresourceData.pSysMem = &colorBuffer;
 
     // Create the buffers but in a different kinda way ykwim
     device->CreateBuffer(&vertexBufferDescriptor, &vertexSubresourceData, vertexBuffer.GetAddressOf());
     device->CreateBuffer(&indexBufferDescriptor, &indexSubresourceData, indexBuffer.GetAddressOf());
-    device->CreateBuffer(&constantBufferDescriptor, &constantSubresourceData, constantBuffer.GetAddressOf());
+    device->CreateBuffer(&transformConstantBufferDescriptor, &transformConstantSubresourceData, tranformConstantBuffer.GetAddressOf());
+    device->CreateBuffer(&colorConstantBufferDescriptor, &colorConstantSubresourceData, colorConstantBuffer.GetAddressOf());
 
     // Bind index buffer
     deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
     // Bind vertex buffer
-    const uint stride = sizeof(Vertex);
+    const uint stride = sizeof(Point);
     const uint offset = 0;
     deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
 
-    // Bind constant buffer
-    deviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
+    // Bind constant buffers
+    deviceContext->VSSetConstantBuffers(0, 1, tranformConstantBuffer.GetAddressOf());
+    deviceContext->PSSetConstantBuffers(0, 1, colorConstantBuffer.GetAddressOf());
 
     // Read & Set shaders
     wrl::ComPtr<ID3DBlob> blob;
@@ -166,8 +196,7 @@ void Pipeline::draw(float time, float x, float y) {
 
     wrl::ComPtr<ID3D11InputLayout> inputLayout;
     const D3D11_INPUT_ELEMENT_DESC elementDescriptor[] = {
-        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0}
+        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
 
     device->CreateInputLayout(elementDescriptor, std::size(elementDescriptor), blob->GetBufferPointer(), blob->GetBufferSize(), inputLayout.GetAddressOf());
