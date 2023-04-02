@@ -76,180 +76,32 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     depthStencilViewDescriptor.Texture2D.MipSlice = 0;
     device->CreateDepthStencilView(
-    	depthStencil.Get(),
+        depthStencil.Get(),
         &depthStencilViewDescriptor,
         &depthView
     );
 
+    // Bind depth stencil
     deviceContext->OMSetRenderTargets(1, renderTarget.GetAddressOf(), depthView.Get());
+
+    D3D11_VIEWPORT viewport;
+    viewport.Width    = (float)width;
+    viewport.Height   = (float)height;
+    viewport.MinDepth = 0.;
+    viewport.MaxDepth = 1.;
+    viewport.TopLeftX = 0.;
+    viewport.TopLeftY = 0.;
+    deviceContext->RSSetViewports(1, &viewport);
 }
 
 void Pipeline::presentBuffer() {
+    // Changing SyncInterval to 0 will probably make windows bleed at this stage,
+    // because the frames take too little time to render and it can't handle renaming the window
+    // that fast. || Cinq.cpp ln. 44-47
     swapchain->Present(1, NULL);
+    //                ~|~
 }
 
-// Most of this is temporary test code :)
-void Pipeline::draw(float time, float x, float y) {
-    struct Point {
-        float x, y, z;
-    };
-
-    Point vertices[] = {
-        {-1.f, -1.f, -1.f},
-        { 1.f, -1.f, -1.f},
-        {-1.f,  1.f, -1.f},
-        {-1.f, -1.f,  1.f},
-        { 1.f,  1.f, -1.f},
-        { 1.f, -1.f,  1.f},
-        {-1.f,  1.f,  1.f},
-        { 1.f,  1.f,  1.f}
-    };
-
-    uint16_t indices[] = {
-        0, 2, 1,   2, 4, 1,
-        1, 4, 5,   4, 7, 5,
-        2, 6, 4,   4, 6, 7,
-        3, 5, 7,   3, 7, 6,
-        0, 3, 2,   2, 3, 6,
-        0, 1, 3,   1, 5, 3
-    };
-
-    struct TransformCBuffer {
-        DirectX::XMMATRIX transform;
-    };
-
-    struct ColorCBuffer {
-        struct {
-            float r, g, b, a;
-        } faceColors[6];
-    };
-
-    ColorCBuffer colorCBuffer = {
-        {
-            {.2f, .2f, .2f},
-            {.4f, .4f, .4f},
-            {.5f, .5f, .5f},
-            {.7f, .7f, .7f},
-            {.8f, .8f, .8f},
-            {.9f, .9f, .9f},
-        }
-    };
-
-    float angle = time * 1.5f;
-    float aspectRatio = height / (float)width;
-
-    TransformCBuffer tranformCBuffer = {
-        {
-            DirectX::XMMatrixTranspose(                                       // Transpose matrix into column major
-                DirectX::XMMatrixRotationZ(angle)                           * // Rotate square along Z
-                DirectX::XMMatrixRotationX(angle)                           * // Rotate square along X
-                DirectX::XMMatrixRotationY(angle)                           * // Rotate square along Y
-                DirectX::XMMatrixTranslation(.0f, .0f, 6.f)                 * // Move the square in front of the camera
-                DirectX::XMMatrixPerspectiveLH(1.f, aspectRatio, .5f, 10.f) * // Perspective magic
-                DirectX::XMMatrixTranslation(x, -y, 0.f)                      // Move the square to x, y
-            )
-        }
-    };
-
-    // Create vertex buffer
-    wrl::ComPtr<ID3D11Buffer> vertexBuffer;
-    D3D11_BUFFER_DESC vertexBufferDescriptor{};
-    vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
-    vertexBufferDescriptor.CPUAccessFlags = NULL;
-    vertexBufferDescriptor.MiscFlags = NULL;
-    vertexBufferDescriptor.ByteWidth = sizeof(vertices);
-    vertexBufferDescriptor.StructureByteStride = sizeof(Point);
-
-    D3D11_SUBRESOURCE_DATA vertexSubresourceData{};
-    vertexSubresourceData.pSysMem = vertices;
-
-    // Create index buffer
-    wrl::ComPtr<ID3D11Buffer> indexBuffer;
-    D3D11_BUFFER_DESC indexBufferDescriptor{};
-    indexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    indexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
-    indexBufferDescriptor.CPUAccessFlags = NULL;
-    indexBufferDescriptor.MiscFlags = NULL;
-    indexBufferDescriptor.ByteWidth = sizeof(vertices);
-    indexBufferDescriptor.StructureByteStride = sizeof(uint16_t);
-
-    D3D11_SUBRESOURCE_DATA indexSubresourceData{};
-    indexSubresourceData.pSysMem = indices;
-
-    // Create constant buffers
-    wrl::ComPtr<ID3D11Buffer> tranformConstantBuffer;
-    D3D11_BUFFER_DESC transformConstantBufferDescriptor{};
-    transformConstantBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    transformConstantBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
-    transformConstantBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    transformConstantBufferDescriptor.MiscFlags = NULL;
-    transformConstantBufferDescriptor.ByteWidth = sizeof(tranformCBuffer);
-    transformConstantBufferDescriptor.StructureByteStride = 0;
-
-    D3D11_SUBRESOURCE_DATA transformConstantSubresourceData{};
-    transformConstantSubresourceData.pSysMem = &tranformCBuffer;
-
-    wrl::ComPtr<ID3D11Buffer> colorConstantBuffer;
-    D3D11_BUFFER_DESC colorConstantBufferDescriptor{};
-    colorConstantBufferDescriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    colorConstantBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
-    colorConstantBufferDescriptor.CPUAccessFlags = NULL;
-    colorConstantBufferDescriptor.MiscFlags = NULL;
-    colorConstantBufferDescriptor.ByteWidth = sizeof(colorCBuffer);
-    colorConstantBufferDescriptor.StructureByteStride = 0;
-
-    D3D11_SUBRESOURCE_DATA colorConstantSubresourceData{};
-    colorConstantSubresourceData.pSysMem = &colorCBuffer;
-
-    // Create the buffers but in a different kinda way ykwim
-    device->CreateBuffer(&vertexBufferDescriptor, &vertexSubresourceData, vertexBuffer.GetAddressOf());
-    device->CreateBuffer(&indexBufferDescriptor, &indexSubresourceData, indexBuffer.GetAddressOf());
-    device->CreateBuffer(&transformConstantBufferDescriptor, &transformConstantSubresourceData, tranformConstantBuffer.GetAddressOf());
-    device->CreateBuffer(&colorConstantBufferDescriptor, &colorConstantSubresourceData, colorConstantBuffer.GetAddressOf());
-
-    // Bind index buffer
-    deviceContext->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-    // Bind vertex buffer
-    const uint stride = sizeof(Point);
-    const uint offset = 0;
-    deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-
-    // Bind constant buffers
-    deviceContext->VSSetConstantBuffers(0, 1, tranformConstantBuffer.GetAddressOf());
-    deviceContext->PSSetConstantBuffers(0, 1, colorConstantBuffer.GetAddressOf());
-
-    // Read & Set shaders
-    wrl::ComPtr<ID3DBlob> blob;
-    wrl::ComPtr<ID3D11PixelShader> pixelShader;
-    D3DReadFileToBlob(L"shader/pixel.cso", &blob);
-    device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pixelShader.GetAddressOf());
-    deviceContext->PSSetShader(pixelShader.Get(), nullptr, NULL);
-
-    wrl::ComPtr<ID3D11VertexShader> vertexShader;
-    D3DReadFileToBlob(L"shader/vertex.cso", &blob);
-    device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, vertexShader.GetAddressOf());
-    deviceContext->VSSetShader(vertexShader.Get(), nullptr, NULL);
-
-    wrl::ComPtr<ID3D11InputLayout> inputLayout;
-    const D3D11_INPUT_ELEMENT_DESC elementDescriptor[] = {
-        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
-    };
-
-    device->CreateInputLayout(elementDescriptor, std::size(elementDescriptor), blob->GetBufferPointer(), blob->GetBufferSize(), inputLayout.GetAddressOf());
-    deviceContext->IASetInputLayout(inputLayout.Get());
-
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    D3D11_VIEWPORT viewport;
-    viewport.Width = width;
-    viewport.Height = height;
-    viewport.MinDepth = 0;
-    viewport.MaxDepth = 1;
-    viewport.TopLeftX = 0;
-    viewport.TopLeftY = 0;
-    deviceContext->RSSetViewports(1, &viewport);
-
-    deviceContext->DrawIndexed(std::size(indices), 0, 0);
+void Pipeline::draw(size_t count) {
+    deviceContext->DrawIndexed(count, 0, 0);
 }

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(cinq CXX)
 set(CMAKE_EXPORT_COMPILE_COMANDS on)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 set(CMAKE_BUILD_TYPE "Release")
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -16,7 +16,7 @@ endif()
 # build HLSL shaders
 # build directory is kinda nonsensical
 add_custom_target(shaders)
-set(SHADER_DIR src/shader)
+set(SHADER_DIR src/Shader)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/shader)
 set(SHADERS ${SHADER_DIR}/vertex.hlsl ${SHADER_DIR}/pixel.hlsl)
 set_source_files_properties(${SHADER_DIR}/vertex.hlsl PROPERTIES shaderType "vs")
@@ -47,6 +47,17 @@ add_executable(
     src/Pipeline.cpp
     src/Keyboard.cpp
     src/Exception.cpp
+
+    src/Bindable/Topology.cpp
+    src/Bindable/IndexBuffer.cpp
+    src/Bindable/InputLayout.cpp
+    src/Bindable/PixelShader.cpp
+    src/Bindable/VertexBuffer.cpp
+    src/Bindable/VertexShader.cpp
+    src/Bindable/TransformCBuffer.cpp
+
+    src/Drawable/Cube.cpp
+    src/Drawable/Drawable.cpp
 )
 
 add_dependencies(

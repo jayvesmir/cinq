@@ -2,9 +2,14 @@
 
 #include "Window.hpp"
 #include "Timer.hpp"
+#include "Drawable/Cube.hpp"
 
-#include <cstdlib> 
 #include <ctime>
+#include <memory>
+#include <random>
+#include <cstdlib>
+
+#define PI 3.141592653589793238462643383279502884L
 
 class Cinq {
 public:
@@ -17,6 +22,7 @@ private:
     Window window;
     const char* title;
     int width, height;
+    std::vector<std::unique_ptr<Cube>> boxes;
 
     void update();
 };

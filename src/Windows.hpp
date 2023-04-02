@@ -44,7 +44,7 @@ typedef uint32_t uint;
 #define STRICT
 
 #include <Windows.h>
-#include <wrl/client.h>
+#include <wrl.h>
 
 // Come and kill me
 namespace wrl = Microsoft::WRL;

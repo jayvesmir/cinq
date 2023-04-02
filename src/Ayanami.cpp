@@ -3,6 +3,8 @@
 #include "Windows.hpp"
 #include "Exception.hpp"
 
+// TODO: More/better error handling
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char* cmdLine, int cmdShow) { 
     const float aspectRatio = 16/9.;
     const int   width       = 1440;

@@ -4,7 +4,22 @@ Cinq::Cinq()
     : window(1280, 720, "Cinq"), width(1280), height(720), title("Cinq") {}
 
 Cinq::Cinq(int width, int height, const char* title)
-    : window(width, height, title), width(width), height(height), title(title) {}
+    : window(width, height, title), width(width), height(height), title(title) {
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<float> adist(0.f, PI * 2.f);
+    std::uniform_real_distribution<float> ddist(0.f, PI * 2.f);
+    std::uniform_real_distribution<float> odist(0.f, PI * .3f);
+    std::uniform_real_distribution<float> rdist(6.f, 20.f);
+
+    for(int i = 0; i < 8; i++) {
+        boxes.push_back(std::make_unique<Cube>(
+            window.getGraphicsPipeline(), rng, adist,
+            ddist, odist, rdist
+        ));
+    }
+        
+    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, .5f, 40.f));
+}
 
 int Cinq::run() {
     srand((unsigned)time(0));
@@ -16,24 +31,20 @@ int Cinq::run() {
 }
 
 void Cinq::update() {
-    float t = timer.markLap();
+    float ts = timer.markLap();
 
-    window.getGraphicsPipeline().clearBuffer({.1f, .1f, .1f, .1f});
+    float bgColor[4] {.1f, .1f, .1f, .1f};
+    window.getGraphicsPipeline().clearBuffer(bgColor);
 
-    float x = window.mouse.X() / ((float)width / 2) - 1.f;  // Squish mouse position to -1..1
-    float y = window.mouse.Y() / ((float)height / 2) - 1.f; // Squish mouse position to -1..1
-
-    window.getGraphicsPipeline().draw(timer.sinceStart(), x, y);
+    for (auto& box : boxes) {
+        box->update(ts);
+        box->draw(window.getGraphicsPipeline());
+    }
 
     float t1 = timer.sinceLastLap();
     char buf[128];
-    sprintf(buf, "%s %.2fms frametime (%.2fms since last update)", title, t1*1000, t*1000); 
+    sprintf(buf, "%s %.2fms frametime (%.2fms since last update)", title, t1*1000, ts*1000); 
     window.setTitle(buf);
 
     window.getGraphicsPipeline().presentBuffer();
-    // Can now be removed because presentBuffer() handles the blocking.
-    // I'm still keeping it just in case something else makes windows cry again
-    // and I won't remember how to calm it down.
-    // Sleep for 1 millisecond to prevent Windows from shitting itself from too many window renames
-    // timer.wait(1);
 }

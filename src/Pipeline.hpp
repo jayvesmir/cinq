@@ -1,6 +1,5 @@
 #pragma once
 #include "Windows.hpp"
-#include "Graphics.hpp"
 
 #include <list>
 #include <d3d11.h>
@@ -8,22 +7,26 @@
 #include <DirectXMath.h>
 
 class Pipeline {
+    friend class Bindable;
 public:
     Pipeline(HWND hWnd, int width, int height);
     Pipeline(const Pipeline&) = delete;
     Pipeline& operator=(const Pipeline&) = delete;
 
     void presentBuffer();
-    void clearBuffer(Color color) {
-        deviceContext->ClearRenderTargetView(renderTarget.Get(), color.data);
-        deviceContext->ClearDepthStencilView(depthView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+    void clearBuffer(const float color[4]) {
+        deviceContext->ClearRenderTargetView(renderTarget.Get(), color);
+        deviceContext->ClearDepthStencilView(depthView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0);
     }
 
-    void draw(float time, float x, float y);
+    void draw(size_t count);
+    void setProjection(DirectX::XMMATRIX projection) { this->projection = projection; }
+    DirectX::XMMATRIX getProjection() const { return projection; }
 
 private:
     int width, height;
     
+    DirectX::XMMATRIX projection;
     wrl::ComPtr<ID3D11Device> device;
     wrl::ComPtr<IDXGISwapChain> swapchain;
     wrl::ComPtr<ID3D11DepthStencilView> depthView;
