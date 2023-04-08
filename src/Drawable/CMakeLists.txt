@@ -19,3 +19,9 @@ add_library(
     Cube.cpp
     Drawable.cpp
 )
+
+target_include_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)

@@ -1,7 +1,7 @@
 #pragma once
-#include "Drawable.hpp"
+#include "DrawableBase.hpp"
 
-class Cube : public Drawable {
+class Cube : public DrawableBase<Cube> {
 public:
     Cube(Pipeline& pipeline,std::mt19937& rng,
         std::uniform_real_distribution<float>& adist,
@@ -19,12 +19,6 @@ private:
 
     // Speed (delta/s)
     float droll, dpitch, dyaw, dtheta, dphi, dchi;
-
-    struct Vertex {
-        float x;
-        float y;
-        float z;
-    };
 
     struct ColorCBuffer {
         struct {
@@ -60,5 +54,9 @@ private:
             {.8f, .8f, .8f},
             {.9f, .9f, .9f},
         }
+    };
+
+    const std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout {
+        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
 };

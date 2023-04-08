@@ -11,13 +11,13 @@ Cinq::Cinq(int width, int height, const char* title)
     std::uniform_real_distribution<float> odist(0.f, PI * .3f);
     std::uniform_real_distribution<float> rdist(6.f, 20.f);
 
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < 32; i++) {
         boxes.push_back(std::make_unique<Cube>(
-            window.getGraphicsPipeline(), rng, adist,
-            ddist, odist, rdist
+            window.getGraphicsPipeline(), 
+            rng, adist, ddist, odist, rdist
         ));
     }
-        
+    
     window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, .5f, 40.f));
 }
 
@@ -43,7 +43,7 @@ void Cinq::update() {
 
     float t1 = timer.sinceLastLap();
     char buf[128];
-    sprintf(buf, "%s %.2fms frametime (%.2fms since last update)", title, t1*1000, ts*1000); 
+    sprintf(buf, "%s %.2fms frametime (%.2fms since last update / %d FPS)", title, t1*1000, ts*1000, (int)(1000/(ts*1000))); 
     window.setTitle(buf);
 
     window.getGraphicsPipeline().presentBuffer();

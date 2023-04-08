@@ -24,3 +24,9 @@ add_library(
     VertexShader.cpp
     TransformCBuffer.cpp
 )
+
+target_include_directories(
+    ${PROJECT_NAME}
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)
