@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(cinq CXX)
+project(cinq-drawable CXX)
 set(CMAKE_EXPORT_COMPILE_COMANDS on)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
@@ -14,4 +14,8 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "/O2 /MT /MP /EHsc")
 endif()
 
-add_subdirectory(src)
+add_library(
+    ${PROJECT_NAME}
+    Cube.cpp
+    Drawable.cpp
+)
