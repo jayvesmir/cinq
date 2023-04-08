@@ -25,7 +25,7 @@ private:
     const char* title;
     int width, height;
     std::vector<std::unique_ptr<Drawable>> drawables;
-    const uint8_t drawableCount = 64;
+    const uint32_t drawableCount = 64;
 
     void update();
 
