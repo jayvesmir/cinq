@@ -9,5 +9,5 @@ public:
     void bind(Pipeline& pipeline) override;
 protected:
     const Drawable& parent;
-    VertexCBuffer<DirectX::XMMATRIX> constantBuffer;
+    static std::unique_ptr<VertexCBuffer<DirectX::XMMATRIX>> constantBuffer;
 };
