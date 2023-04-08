@@ -33,10 +33,4 @@ private:
 
     const IndexBuffer* indexBuffer = nullptr;
     std::vector<std::unique_ptr<Bindable>> binds;
-protected:
-    struct Vertex {
-        float x;
-        float y;
-        float z;
-    };
 };

@@ -3,14 +3,15 @@
 #include "DrawableBase.hpp"
 #include "Bindable/Bindables.hpp"
 
-class Cube : public DrawableBase<Cube> {
+class Sphere : public DrawableBase<Sphere> {
 public:
-    Cube(Pipeline& pipeline, std::mt19937& rng,
+    Sphere(Pipeline& pipeline, std::mt19937& rng,
         std::uniform_real_distribution<float>& adist,
         std::uniform_real_distribution<float>& ddist,
         std::uniform_real_distribution<float>& odist,
         std::uniform_real_distribution<float>& rdist,
-        std::uniform_real_distribution<float>& bdist );
+        std::uniform_int_distribution<int>& resXdist,
+        std::uniform_int_distribution<int>& resYdist);
     void update(float ts) override;
     DirectX::XMMATRIX getTransformMatrix() const override;
 private:
@@ -22,9 +23,7 @@ private:
 
     // Speed (delta/s)
     float droll, dpitch, dyaw, dtheta, dphi, dchi;
-
-    DirectX::XMFLOAT3X3 transformMatrix;
-
+    
     struct Vertex {
         DirectX::XMFLOAT3 pos;
     };
@@ -36,15 +35,14 @@ private:
     };
 
     const ColorCBuffer colorCBuffer { {
-            {.2f, .2f, .2f},
-            {.4f, .4f, .4f},
-            {.5f, .5f, .5f},
-            {.7f, .7f, .7f},
-            {.8f, .8f, .8f},
-            {.9f, .9f, .9f},
-            // Ignored
-            {.0f, .0f, .0f},
-            {.0f, .0f, .0f}
+            { 1.f,  1.f,  1.f },
+            { 1.f,  .2f,  .8f },
+            { .5f,  .2f,  .8f },
+            { .8f,  .2f,  1.f },
+            { 2.f,  1.f,  .8f },
+            { 1.f,  .8f,  .2f },
+            { 1.f,  .5f,  .2f },
+            { 1.f,  .5f,  .5f }
         }
     };
 

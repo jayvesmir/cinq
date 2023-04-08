@@ -44,9 +44,19 @@ target_link_libraries(
 # build HLSL shaders
 add_custom_target(shaders)
 file(MAKE_DIRECTORY ${SHADER_DIR})
-set(SHADERS Shader/vertex.hlsl Shader/pixel.hlsl)
-set_source_files_properties(Shader/vertex.hlsl PROPERTIES shaderType "vs")
-set_source_files_properties(Shader/pixel.hlsl PROPERTIES shaderType "ps")
+set(
+    SHADERS
+
+    Shader/ColorIndexVS.hlsl
+    Shader/ColorIndexPS.hlsl
+    Shader/ColorBlendVS.hlsl
+    Shader/ColorBlendPS.hlsl
+)
+
+set_source_files_properties(Shader/ColorIndexVS.hlsl PROPERTIES shaderType "vs")
+set_source_files_properties(Shader/ColorIndexPS.hlsl PROPERTIES shaderType "ps")
+set_source_files_properties(Shader/ColorBlendVS.hlsl PROPERTIES shaderType "vs")
+set_source_files_properties(Shader/ColorBlendPS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(${SHADERS} PROPERTIES shaderModel "4_0")
 
 foreach(FILE ${SHADERS})

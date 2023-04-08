@@ -5,18 +5,10 @@ Cinq::Cinq()
 
 Cinq::Cinq(int width, int height, const char* title)
     : window(width, height, title), width(width), height(height), title(title) {
-    std::mt19937 rng(std::random_device{}());
-    std::uniform_real_distribution<float> adist(0.f, PI * 2.f);
-    std::uniform_real_distribution<float> ddist(0.f, PI * 2.f);
-    std::uniform_real_distribution<float> odist(0.f, PI * .3f);
-    std::uniform_real_distribution<float> rdist(6.f, 20.f);
 
-    for(int i = 0; i < 32; i++) {
-        boxes.push_back(std::make_unique<Cube>(
-            window.getGraphicsPipeline(), 
-            rng, adist, ddist, odist, rdist
-        ));
-    }
+    Factory factory(window.getGraphicsPipeline());
+    drawables.reserve(drawableCount);
+    std::generate_n(std::back_inserter(drawables), drawableCount, factory);
     
     window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, .5f, 40.f));
 }
@@ -36,9 +28,9 @@ void Cinq::update() {
     float bgColor[4] {.1f, .1f, .1f, .1f};
     window.getGraphicsPipeline().clearBuffer(bgColor);
 
-    for (auto& box : boxes) {
-        box->update(ts);
-        box->draw(window.getGraphicsPipeline());
+    for (auto& drawable : drawables) {
+        drawable->update(ts);
+        drawable->draw(window.getGraphicsPipeline());
     }
 
     float t1 = timer.sinceLastLap();

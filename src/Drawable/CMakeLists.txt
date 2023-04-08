@@ -17,6 +17,8 @@ endif()
 add_library(
     ${PROJECT_NAME}
     Cube.cpp
+    Sphere.cpp
+    Pyramid.cpp
     Drawable.cpp
 )
 
