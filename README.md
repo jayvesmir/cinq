@@ -11,4 +11,7 @@
 - More/Better error handling
 
 ### Latest rendering capability (?)
-<img src="res/readme/render.png">
+<img src="res/readme/render.png" width="540">
+
+## Dependencies
+- [nothings - stb](https://github.com/nothings/stb)
