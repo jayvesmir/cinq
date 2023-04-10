@@ -52,7 +52,7 @@ private:
                     odist, rdist, yDist, xDist
                 );
             default:
-                assert(false && "bad drawable type in factory");
+                assert(false && "Invalid drawable type");
                 return {};
             }
         }

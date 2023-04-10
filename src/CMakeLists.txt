@@ -20,6 +20,7 @@ add_executable(
     ../res/Cinq.rc
     Cinq.cpp
     Mouse.cpp
+    Image.cpp
     timer.cpp
     Window.cpp
     Ayanami.cpp
