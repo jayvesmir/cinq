@@ -9,7 +9,8 @@ Cinq::Cinq(int width, int height, const char* title)
     Factory factory(window.getGraphicsPipeline());
     drawables.reserve(drawableCount);
     std::generate_n(std::back_inserter(drawables), drawableCount, factory);
-    
+
+    auto img = Image::load("res/2b.png");
     window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, .5f, 40.f));
 }
 

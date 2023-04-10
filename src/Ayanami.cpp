@@ -10,9 +10,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char *cmdLine, 
     const int width = 1440;
     const int height = width / aspectRatio;
     
-    Cinq cinq(width, height, "Cinq");
-    
     try {
+      Cinq cinq(width, height, "Cinq"); // lol
       cinq.run();
     } catch (const CinqException &e) {
       MessageBox(nullptr, e.what(), e.getType(), MB_OK | MB_ICONERROR);

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Window.hpp"
-#include "Timer.hpp"
 #include "Math.hpp"
+#include "Image.hpp"
+#include "Timer.hpp"
+#include "Window.hpp"
 #include "Drawable/Cube.hpp"
 #include "Drawable/Sphere.hpp"
 #include "Drawable/Pyramid.hpp"

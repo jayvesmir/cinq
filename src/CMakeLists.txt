@@ -1,17 +1,15 @@
 cmake_minimum_required(VERSION 3.14)
 
+set(RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/res)
 set(SHADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/shader)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "-O4")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     set(CMAKE_CXX_FLAGS "-O5")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    if (CMAKE_BUILD_TYPE STREQUAL "Release") 
-        set(SHADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/Release/shader)
-    elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(SHADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/Debug/shader)
-    endif()
     set(CMAKE_CXX_FLAGS "/O2 /MT /MP /EHsc")
+    set(RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/res)
+    set(SHADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/shader)
 endif()
 
 add_executable(
@@ -42,12 +40,11 @@ target_link_libraries(
     cinq-drawable
 )
 
-# build HLSL shaders
+# Build HLSL shaders
 add_custom_target(shaders)
 file(MAKE_DIRECTORY ${SHADER_DIR})
 set(
     SHADERS
-
     Shader/ColorIndexVS.hlsl
     Shader/ColorIndexPS.hlsl
     Shader/ColorBlendVS.hlsl
@@ -72,7 +69,25 @@ foreach(FILE ${SHADERS})
                        VERBATIM)
 endforeach(FILE)
 
+# Copy resources
+add_custom_target(resources)
+file(MAKE_DIRECTORY ${RESOURCE_DIR})
+set(
+    RESOURCES
+    ${CMAKE_SOURCE_DIR}/res/2b.png
+)
+
+foreach(FILE ${RESOURCES})
+    add_custom_command(TARGET resources
+                       COMMAND ${CMAKE_COMMAND}
+                       ARGS -E copy ${FILE} ${RESOURCE_DIR}
+                       COMMENT "Copy ${FILE}"
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                       VERBATIM)
+endforeach(FILE)
+
 add_dependencies(
     ${PROJECT_NAME}
     shaders
+    resources
 )
