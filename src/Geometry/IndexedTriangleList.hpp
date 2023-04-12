@@ -7,10 +7,7 @@ class IndexedTriangleList {
 public:
     IndexedTriangleList() = default;
     IndexedTriangleList(std::vector<T> vertices, std::vector<uint16_t> indices)
-        : vertices(std::move(vertices)), indices(std::move(indices)) {
-        assert(vertices.size() > 2);
-        assert(indices.size() % 3 == 0);
-    }
+        : vertices(std::move(vertices)), indices(std::move(indices)) {}
 
     void Transform(DirectX::FXMMATRIX matrix) {
         for(auto& v : vertices){

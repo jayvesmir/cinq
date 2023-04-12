@@ -19,9 +19,16 @@ public:
     private:
         std::string msg;
     };
+
+    enum ImageType {
+        PNG = 0,
+        JPEG,
+        TGA,
+        BMP
+    };
 public:
-    Image(int width, int height, Color* buffer) : width(width), height(height), buffer(buffer) {}
-    Image(int width, int height) : width(width), height(height), buffer(new Color[width * height]) {}
+    Image(int width, int height, Color* buffer, int comp = 4) : width(width), height(height), buffer(buffer), comp(comp) {}
+    Image(int width, int height, int comp = 4) : width(width), height(height), buffer(new Color[width * height]), comp(comp) {}
 
     Image(Image&& src) : width(src.width), height(src.height), buffer(src.buffer) {}
     Image(const Image&) = delete;
@@ -44,12 +51,16 @@ public:
     int getWidth() const { return width; }
     int getHeight() const { return height; }
     Color* getBuffer() const { return buffer; }
+    Color* getBufferABGR();
     static Image load(const char* filepath);
+    static ImageType getImageType(const char* filename);
     void save(const char* filepath);
     void copyBuffer(const Image& src);
 private:
     Color* buffer;
-    int width, height;
+    // Comp is the number of components in the pixels
+    // of the ORIGINAL image, not the one that's in memory
+    int width, height, comp;
 };
 
 #define CINQ_IMAGE_EXCEPT(msg) \
