@@ -5,6 +5,7 @@
 #include "Timer.hpp"
 #include "Window.hpp"
 #include "Drawable/Cube.hpp"
+#include "Drawable/Plane.hpp"
 #include "Drawable/Sphere.hpp"
 #include "Drawable/Pyramid.hpp"
 #include "Drawable/DrawableBase.hpp"
@@ -52,6 +53,11 @@ private:
                     pipeline, rng, adist, ddist,
                     odist, rdist, yDist, xDist
                 );
+            case 3:
+                return std::make_unique<Plane>(
+                    pipeline, rng, adist, ddist,
+                    odist, rdist
+                );
             default:
                 assert(false && "Invalid drawable type");
                 return {};
@@ -67,6 +73,6 @@ private:
         std::uniform_real_distribution<float> bdist { .4f, PI };
         std::uniform_int_distribution<int> xDist    { 5  , 20 };
         std::uniform_int_distribution<int> yDist    { 10 , 30 };
-        std::uniform_int_distribution<int> typedist { 0  , 2 };
+        std::uniform_int_distribution<int> typedist { 0  , 3 };
     };
 };

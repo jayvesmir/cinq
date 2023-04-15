@@ -22,7 +22,7 @@ Texture::Texture(Pipeline& pipeline, const Image& image) {
     // Set the image as the texture
     D3D11_SUBRESOURCE_DATA textureSubData{};
     textureSubData.pSysMem = image.getBuffer();
-    textureSubData.SysMemPitch = image.getWidth() * 4;
+    textureSubData.SysMemPitch = image.getWidth() * sizeof(Color);
 
     // Actually create the texture
     wrl::ComPtr<ID3D11Texture2D> texture;

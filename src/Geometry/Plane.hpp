@@ -9,7 +9,7 @@ namespace Geometry {
     class Plane {
     public:
         template<class T>
-        static IndexedTriangleList<T> makeTesselated(int resolutionX, int resolutionY) {
+        static IndexedTriangleList<T> generateTesselated(int resolutionX, int resolutionY) {
             assert(resolutionX >= 1);
             assert(resolutionY >= 1);
 
@@ -70,7 +70,7 @@ namespace Geometry {
         }
         template<class T>
         static IndexedTriangleList<T> generate() {
-            return makeTesselated<T>(1, 1);
+            return generateTesselated<T>(1, 1);
         }
     };
 }

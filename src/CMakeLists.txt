@@ -66,7 +66,7 @@ foreach(FILE ${SHADERS})
     get_source_file_property(shadertype ${FILE} shaderType)
     get_source_file_property(shadermodel ${FILE} shaderModel)
     add_custom_command(TARGET shaders
-                       COMMAND fxc.exe /nologo /Emain /T${shadertype}_${shadermodel} /O2 /Zi /Fo ${SHADER_DIR}/${FILE_WE}.cso ${FILE}
+                       COMMAND fxc.exe /nologo /Emain /T${shadertype}_${shadermodel} /O2 /Zi /Fo ${SHADER_DIR}/${FILE_WE}.cso /I ${CMAKE_SOURCE_DIR}/src/Shader ${FILE}
                        MAIN_DEPENDENCY ${FILE}
                        COMMENT "HLSL ${FILE}"
                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
