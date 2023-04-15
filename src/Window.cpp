@@ -5,20 +5,20 @@ Window::WindowClass Window::WindowClass::windowClass;
 Window::WindowClass::WindowClass() noexcept 
     : hInstance(GetModuleHandle(nullptr)) {
     // Create window class
-    WNDCLASSEX wc;
-    wc.hInstance = hInstance;
-    wc.hIcon = (HICON)(LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 32, 32, 0));
-    wc.hIconSm = (HICON)(LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, 0));; // It looks like total garbage but I like it :3
-    wc.hCursor = nullptr;
-    wc.hbrBackground = nullptr;
-    wc.cbSize = sizeof(wc);
-    wc.style = CS_OWNDC;
-    wc.lpfnWndProc = handleMsgSetup;
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.lpszMenuName = nullptr;
-    wc.lpszClassName = className;
-    RegisterClassEx(&wc);
+    WNDCLASSEX windowClass;
+    windowClass.hInstance = hInstance;
+    windowClass.hIcon = (HICON)(LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 32, 32, 0));
+    windowClass.hIconSm = (HICON)(LoadImage(hInstance, MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, 16, 16, 0));; // It looks like total garbage but I like it :3
+    windowClass.hCursor = nullptr;
+    windowClass.hbrBackground = nullptr;
+    windowClass.cbSize = sizeof(windowClass);
+    windowClass.style = CS_OWNDC;
+    windowClass.lpfnWndProc = handleMsgSetup;
+    windowClass.cbClsExtra = 0;
+    windowClass.cbWndExtra = 0;
+    windowClass.lpszMenuName = nullptr;
+    windowClass.lpszClassName = className;
+    RegisterClassEx(&windowClass);
 }
 
 Window::Window(int width, int height, const char* title) 

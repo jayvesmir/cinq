@@ -24,8 +24,8 @@ Image Image::load(const char* filepath) {
     
     // Check for any errors regarding the image
     if (stbi_info(filepath, &width, &height, &comp) != 1) {
-        char buf[64];
-        snprintf(buf, 64, "Invalid file format: %s", filepath);
+        char buf[256];
+        snprintf(buf, 256, "Invalid file: %s", filepath);
         throw CINQ_IMAGE_EXCEPT(buf);
     } if (comp < 3) {
         throw CINQ_IMAGE_EXCEPT("Unsupported color format");

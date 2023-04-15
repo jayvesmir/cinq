@@ -1,5 +1,5 @@
 #pragma once
-#include "../Pipeline.hpp"
+#include "Pipeline.hpp"
 
 #include <vector>
 #include <string>

@@ -16,6 +16,8 @@ endif()
 
 add_library(
     ${PROJECT_NAME}
+    Sampler.cpp
+    Texture.cpp
     Topology.cpp
     IndexBuffer.cpp
     InputLayout.cpp

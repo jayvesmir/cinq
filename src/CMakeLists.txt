@@ -45,12 +45,16 @@ add_custom_target(shaders)
 file(MAKE_DIRECTORY ${SHADER_DIR})
 set(
     SHADERS
+    Shader/TextureVS.hlsl
+    Shader/TexturePS.hlsl
     Shader/ColorIndexVS.hlsl
     Shader/ColorIndexPS.hlsl
     Shader/ColorBlendVS.hlsl
     Shader/ColorBlendPS.hlsl
 )
 
+set_source_files_properties(Shader/TextureVS.hlsl PROPERTIES shaderType "vs")
+set_source_files_properties(Shader/TexturePS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/ColorIndexVS.hlsl PROPERTIES shaderType "vs")
 set_source_files_properties(Shader/ColorIndexPS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/ColorBlendVS.hlsl PROPERTIES shaderType "vs")
