@@ -5,16 +5,19 @@ Cube::Cube(Pipeline& pipeline, std::mt19937& rng, std::uniform_real_distribution
     // First of type to be constructed
     if (!isInitialized()) {
         // Generate mesh
-        auto model = Geometry::Cube::generate<Vertex>();
+        auto model = Geometry::Cube::generateTextured<Vertex>();
 
         // Bind (constant) buffers
         bindStatic(std::make_unique<VertexBuffer>(pipeline, model.vertices));
         addIndexBufferStatic(std::make_unique<IndexBuffer>(pipeline, model.indices));
-        bindStatic(std::make_unique<PixelCBuffer<ColorCBuffer>>(pipeline, colorCBuffer));
+
+        // Bind texture
+        bindStatic(std::make_unique<Sampler>(pipeline));
+        bindStatic(std::make_unique<Texture>(pipeline, Image::load("res/cube.png")));
 
         // Create & bind shaders
-        std::unique_ptr<PixelShader> pixelShader = std::make_unique<PixelShader>(pipeline, L"shader/ColorIndexPS.cso");
-        std::unique_ptr<VertexShader> vertexShader = std::make_unique<VertexShader>(pipeline, L"shader/ColorIndexVS.cso");
+        std::unique_ptr<PixelShader> pixelShader = std::make_unique<PixelShader>(pipeline, L"shader/TexturePS.cso");
+        std::unique_ptr<VertexShader> vertexShader = std::make_unique<VertexShader>(pipeline, L"shader/TextureVS.cso");
         wrl::ComPtr<ID3DBlob> vsBytecode = vertexShader->getBytecode();
         bindStatic(std::move(vertexShader));
         bindStatic(std::move(pixelShader));
@@ -28,12 +31,6 @@ Cube::Cube(Pipeline& pipeline, std::mt19937& rng, std::uniform_real_distribution
     
     // Bind non-static (constant) buffers
     bind(std::make_unique<TransformCBuffer>(pipeline, *this));
-
-    // Set individual random scaling
-    DirectX::XMStoreFloat3x3(
-        &transformMatrix,
-        DirectX::XMMatrixScaling(1.f, 1.f, bdist(rng))
-    );
 }
 
 void Cube::update(float ts) {
@@ -47,7 +44,6 @@ void Cube::update(float ts) {
 
 DirectX::XMMATRIX Cube::getTransformMatrix() const {
     return (
-        DirectX::XMLoadFloat3x3(&transformMatrix) *
         DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
         DirectX::XMMatrixTranslation(r, 0.f, 0.f) *
         DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi) *

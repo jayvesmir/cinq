@@ -8,7 +8,8 @@
 </div>
 
 ### TODOS
-- More/Better error handling
+- [More/Better error handling](src/Ayanami.cpp#L6)
+- [Generalize](src/Geometry/Plane.hpp#L77)
 
 ### Latest rendering capability (?)
 <img src="res/readme/render.png" width="540">

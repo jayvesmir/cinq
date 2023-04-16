@@ -5,11 +5,7 @@ Plane::Plane(Pipeline& pipeline, std::mt19937& rng, std::uniform_real_distributi
     // First of type to be constructed
     if (!isInitialized()) {
         // Generate mesh
-        auto model = Geometry::Plane::generate<Vertex>();
-        model.vertices[0].texture = {0.f, 0.f};
-        model.vertices[1].texture = {1.f, 0.f};
-        model.vertices[2].texture = {0.f, 1.f};
-        model.vertices[3].texture = {1.f, 1.f};
+        auto model = Geometry::Plane::generateTextured<Vertex>();
 
         // Bind (constant) buffers
         bindStatic(std::make_unique<VertexBuffer>(pipeline, model.vertices));

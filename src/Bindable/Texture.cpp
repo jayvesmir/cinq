@@ -8,9 +8,8 @@ Texture::Texture(Pipeline& pipeline, const Image& image) {
     textureDesc.Height = image.getHeight();
     textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
-    // Mipmap settings
-    textureDesc.MipLevels = 1;
     textureDesc.ArraySize = 1;
+    textureDesc.MipLevels = 1;
     // Anti-aliasing settings
     textureDesc.SampleDesc.Count = 1;
     textureDesc.SampleDesc.Quality = 0;
@@ -35,7 +34,7 @@ Texture::Texture(Pipeline& pipeline, const Image& image) {
     viewDesc.Texture2D.MipLevels = 1;
     viewDesc.Texture2D.MostDetailedMip = 0;
 
-    getDevice(pipeline)->CreateShaderResourceView(texture.Get(), &viewDesc, &textureView);
+    getDevice(pipeline)->CreateShaderResourceView(texture.Get(), &viewDesc, textureView.GetAddressOf());
 }
 
 void Texture::bind(Pipeline& pipeline) {

@@ -79,6 +79,7 @@ file(MAKE_DIRECTORY ${RESOURCE_DIR})
 set(
     RESOURCES
     ${CMAKE_SOURCE_DIR}/res/2b.png
+    ${CMAKE_SOURCE_DIR}/res/cube.png
 )
 
 foreach(FILE ${RESOURCES})

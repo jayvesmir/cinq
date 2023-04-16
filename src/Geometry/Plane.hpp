@@ -68,9 +68,23 @@ namespace Geometry {
 
             return { std::move(vertices), std::move(indices) };
         }
+
         template<class T>
         static IndexedTriangleList<T> generate() {
             return generateTesselated<T>(1, 1);
+        }
+
+        // TODO: Generalize
+        template<class T>
+        static IndexedTriangleList<T> generateTextured() {
+            auto mesh = generateTesselated<T>(1, 1);
+
+            mesh.vertices[0].texture = {0.f, 0.f};
+            mesh.vertices[1].texture = {1.f, 0.f};
+            mesh.vertices[2].texture = {0.f, 1.f};
+            mesh.vertices[3].texture = {1.f, 1.f};
+
+            return mesh;
         }
     };
 }

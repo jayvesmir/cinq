@@ -1,6 +1,6 @@
 #include "Pipeline.hpp"
 
-Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(height){
+Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(height) {
     DXGI_SWAP_CHAIN_DESC swapchainDesc{};
     // Front & Back buffer settings
     swapchainDesc.BufferDesc.Width = 0;
@@ -58,26 +58,26 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
 
     // Create depth stencil texture
     wrl::ComPtr<ID3D11Texture2D> depthStencil;
-    D3D11_TEXTURE2D_DESC depthTextureDescriptor{};
-    depthTextureDescriptor.Width = width;
-    depthTextureDescriptor.Height = height;
-    depthTextureDescriptor.MipLevels = 1;
-    depthTextureDescriptor.ArraySize = 1;
-    depthTextureDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
-    depthTextureDescriptor.SampleDesc.Count = 1;
-    depthTextureDescriptor.SampleDesc.Quality = 0;
-    depthTextureDescriptor.Usage = D3D11_USAGE_DEFAULT;
-    depthTextureDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    device->CreateTexture2D(&depthTextureDescriptor, nullptr, &depthStencil);
+    D3D11_TEXTURE2D_DESC depthTextureDesc{};
+    depthTextureDesc.Width = width;
+    depthTextureDesc.Height = height;
+    depthTextureDesc.MipLevels = 1;
+    depthTextureDesc.ArraySize = 1;
+    depthTextureDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthTextureDesc.SampleDesc.Count = swapchainDesc.SampleDesc.Count;
+    depthTextureDesc.SampleDesc.Quality = swapchainDesc.SampleDesc.Quality;
+    depthTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+    depthTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    device->CreateTexture2D(&depthTextureDesc, nullptr, &depthStencil);
 
     // Create depth stencil
-    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDescriptor{};
-    depthStencilViewDescriptor.Format = DXGI_FORMAT_D32_FLOAT;
-    depthStencilViewDescriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    depthStencilViewDescriptor.Texture2D.MipSlice = 0;
+    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+    depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    depthStencilViewDesc.Texture2D.MipSlice = 0;
     device->CreateDepthStencilView(
         depthStencil.Get(),
-        &depthStencilViewDescriptor,
+        &depthStencilViewDesc,
         &depthView
     );
 
