@@ -1,8 +1,7 @@
 #pragma once
 
 #include <cstdint>
-typedef int64_t  Result;
-typedef uint32_t uint;
+typedef int64_t Result;
 
 #define _WIN32_WINNT 0x0601
 #include <sdkddkver.h>

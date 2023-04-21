@@ -3,8 +3,8 @@
 Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(height) {
     DXGI_SWAP_CHAIN_DESC swapchainDesc{};
     // Front & Back buffer settings
-    swapchainDesc.BufferDesc.Width = 0;
-    swapchainDesc.BufferDesc.Height = 0;
+    swapchainDesc.BufferDesc.Width = width;
+    swapchainDesc.BufferDesc.Height = height;
     swapchainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapchainDesc.BufferDesc.RefreshRate.Numerator = 0;
     swapchainDesc.BufferDesc.RefreshRate.Denominator = 0;
@@ -14,7 +14,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     swapchainDesc.BufferCount = 1;
     // Anti-aliasing settings
     swapchainDesc.SampleDesc.Count = 1;
-    swapchainDesc.SampleDesc.Quality = 0;
+    swapchainDesc.SampleDesc.Quality = D3D11_STANDARD_MULTISAMPLE_PATTERN;
     // Other Settings
     swapchainDesc.OutputWindow = hWnd;
     swapchainDesc.Windowed = TRUE;
@@ -46,12 +46,12 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     );
 
     // Create depth stensil state
-    D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor{};
-    depthStencilDescriptor.DepthEnable = TRUE;
-    depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS;
+    D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
+    depthStencilDesc.DepthEnable = TRUE;
+    depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
     wrl::ComPtr<ID3D11DepthStencilState> depthStencilState;
-    device->CreateDepthStencilState(&depthStencilDescriptor, &depthStencilState);
+    device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
 
     // Bind depth state
     deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
@@ -96,7 +96,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
 
 void Pipeline::presentBuffer() {
     // Changing SyncInterval to 0 will probably make windows bleed at this stage,
-    // because the frames take too little time to render and it can't handle renaming the window
+    // because the frames take too little time to render and it can't handle updating the window
     // that fast. || Cinq.cpp ln. 44-47
     swapchain->Present(1, NULL);
     //                ~|~

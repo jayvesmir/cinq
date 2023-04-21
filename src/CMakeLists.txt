@@ -2,12 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 set(RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/res)
 set(SHADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/shader)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "-O4")
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "-O5")
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    set(CMAKE_CXX_FLAGS "/O2 /MT /MP /EHsc")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/res)
     set(SHADER_DIR ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/shader)
 endif()
@@ -19,7 +14,8 @@ add_executable(
     Cinq.cpp
     Mouse.cpp
     Image.cpp
-    timer.cpp
+    Timer.cpp
+    Camera.cpp
     Window.cpp
     Ayanami.cpp
     Pipeline.cpp

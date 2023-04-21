@@ -3,12 +3,9 @@
 #include "Math.hpp"
 #include "Image.hpp"
 #include "Timer.hpp"
+#include "Camera.hpp"
 #include "Window.hpp"
-#include "Drawable/Cube.hpp"
-#include "Drawable/Plane.hpp"
-#include "Drawable/Sphere.hpp"
-#include "Drawable/Pyramid.hpp"
-#include "Drawable/DrawableBase.hpp"
+#include "Drawable/Drawables.hpp"
 
 #include <ctime>
 #include <memory>
@@ -24,6 +21,7 @@ public:
 private:
     Timer timer;
     Window window;
+    Camera camera;
     const char* title;
     int width, height;
     std::vector<std::unique_ptr<Drawable>> drawables;

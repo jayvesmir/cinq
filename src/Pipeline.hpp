@@ -20,12 +20,16 @@ public:
     }
 
     void draw(size_t count);
-    void setProjection(DirectX::XMMATRIX projection) { this->projection = projection; }
+
+    DirectX::XMMATRIX getCamera() { return camera; }
     DirectX::XMMATRIX getProjection() const { return projection; }
+    void setCamera(DirectX::XMMATRIX camera) { this->camera = camera; }
+    void setProjection(DirectX::XMMATRIX projection) { this->projection = projection; }
 
 private:
     int width, height;
     
+    DirectX::XMMATRIX camera;
     DirectX::XMMATRIX projection;
     wrl::ComPtr<ID3D11Device> device;
     wrl::ComPtr<IDXGISwapChain> swapchain;
