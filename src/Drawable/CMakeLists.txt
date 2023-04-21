@@ -16,3 +16,9 @@ target_include_directories(
     PRIVATE
     ${CMAKE_SOURCE_DIR}/src
 )
+
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE
+    imgui
+)

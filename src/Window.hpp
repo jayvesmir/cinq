@@ -1,4 +1,5 @@
 #pragma once
+#include "Imgui.hpp"
 #include "Mouse.hpp"
 #include "Windows.hpp"
 #include "Keyboard.hpp"
@@ -41,7 +42,7 @@ public:
     };
 
 private:
-    HWND hWnd;
+    HWND window;
     char* title;
     int width, height;
     std::unique_ptr<Pipeline> pipeline;
@@ -54,7 +55,12 @@ public:
     Keyboard keyboard;
 
     Window(int width, int height, const char* title);
-    ~Window() { DestroyWindow(hWnd); }
+    ~Window() { 
+        DestroyWindow(window);
+
+        ImGui_ImplDX11_Shutdown();
+        ImGui_ImplWin32_Shutdown();
+    }
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
     void setTitle(const char* title = nullptr);

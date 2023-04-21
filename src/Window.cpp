@@ -2,6 +2,9 @@
 
 Window::WindowClass Window::WindowClass::windowClass;
 
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 Window::WindowClass::WindowClass() noexcept 
     : hInstance(GetModuleHandle(nullptr)) {
     // Create window class
@@ -35,7 +38,7 @@ Window::Window(int width, int height, const char* title)
         throw CINQ_LAST_EXCEPT();
 
     // Create window
-    hWnd = CreateWindowEx(
+    window = CreateWindowEx(
         0,
         WindowClass::getName(),                     // Window class
         title,                                      // Window text
@@ -51,18 +54,21 @@ Window::Window(int width, int height, const char* title)
         this                                        // Additional application data
     );
 
-    if (!hWnd)
+    if (!window)
         throw CINQ_LAST_EXCEPT();
 
-    ShowWindow(hWnd, SW_SHOWDEFAULT);
+    ShowWindow(window, SW_SHOWDEFAULT);
 
-    pipeline = std::make_unique<Pipeline>(hWnd, width, height);
+    // Init ImGui Window
+    ImGui_ImplWin32_Init(window);
+
+    pipeline = std::make_unique<Pipeline>(window, width, height);
 }
 
 void Window::setTitle(const char* title) {
     this->title = (char*)title;
     if (title) {
-        if (SetWindowText(hWnd, title) == FALSE)
+        if (SetWindowText(window, title) == FALSE)
             throw CINQ_LAST_EXCEPT();
     }
 }
@@ -99,6 +105,10 @@ Result CALLBACK Window::handleMsgThunk(HWND hWnd, uint msg, uint64_t uParam, int
 }
 
 Result Window::handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) noexcept {
+    if(ImGui_ImplWin32_WndProcHandler(hWnd, msg, uParam, param)){
+        return true;
+    }
+
     switch (msg) {
         case WM_CLOSE:
             PostQuitMessage(0);

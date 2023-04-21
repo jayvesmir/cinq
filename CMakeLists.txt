@@ -15,5 +15,9 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "/O2 /MT /MP /EHsc")
 endif()
 
+include_directories(
+    ${CMAKE_SOURCE_DIR}/lib
+)
+
 add_subdirectory(src)
 add_subdirectory(lib)

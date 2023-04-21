@@ -14,6 +14,7 @@ add_executable(
     Cinq.cpp
     Mouse.cpp
     Image.cpp
+    Imgui.cpp
     Timer.cpp
     Camera.cpp
     Window.cpp
@@ -29,12 +30,14 @@ add_subdirectory(Drawable)
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
+    imgui
     d3d11
     d3dcompiler
 
     cinq-bindable
     cinq-drawable
 )
+
 
 # Build HLSL shaders
 add_custom_target(shaders)

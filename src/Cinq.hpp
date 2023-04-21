@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math.hpp"
+#include "Imgui.hpp"
 #include "Image.hpp"
 #include "Timer.hpp"
 #include "Camera.hpp"
@@ -19,6 +20,7 @@ public:
 
     int run();
 private:
+    Imgui gui;
     Timer timer;
     Window window;
     Camera camera;

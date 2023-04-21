@@ -92,14 +92,13 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     viewport.TopLeftX = 0.;
     viewport.TopLeftY = 0.;
     deviceContext->RSSetViewports(1, &viewport);
+
+    // Init ImGui Renderer
+    ImGui_ImplDX11_Init(device.Get(), deviceContext.Get());
 }
 
 void Pipeline::presentBuffer() {
-    // Changing SyncInterval to 0 will probably make windows bleed at this stage,
-    // because the frames take too little time to render and it can't handle updating the window
-    // that fast. || Cinq.cpp ln. 44-47
     swapchain->Present(1, NULL);
-    //                ~|~
 }
 
 void Pipeline::draw(size_t count) {

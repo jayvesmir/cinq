@@ -1,7 +1,10 @@
 #pragma once
+
+#include "Imgui.hpp"
 #include "Windows.hpp"
 
 #include <list>
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
