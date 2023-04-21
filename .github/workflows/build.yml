@@ -37,4 +37,4 @@ jobs:
       
     - name: Build
       shell: powershell
-      run: cmake --build build --config Release -j 2
+      run: cmake --build build --config Debug -j 2
