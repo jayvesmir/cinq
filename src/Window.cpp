@@ -117,6 +117,9 @@ Result Window::handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) no
         // Keyboard Messages
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
+            if (ImGui::GetIO().WantCaptureKeyboard)
+                break;
+
             // Check if the key was in a down state before this event
             // in order to filter out autorepeated key presses.
             if (!(param & 0x40000000) || keyboard.autorepeatIsEnabled())

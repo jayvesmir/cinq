@@ -14,3 +14,13 @@ DirectX::XMMATRIX Camera::getTransformMatrix() const {
         DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll)
     );
 }
+
+void Camera::reset() {
+    roll  = 0.f;
+    pitch = 0.f;
+    yaw   = 0.f;
+    r     = 5.f;
+    theta = 0.f;
+    phi   = 0.f;
+    chi   = 0.f;
+}

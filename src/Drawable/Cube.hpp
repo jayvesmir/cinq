@@ -1,4 +1,5 @@
 #pragma once
+#include "Math.hpp"
 #include "Geometry.hpp"
 #include "DrawableBase.hpp"
 #include "Bindable/Bindables.hpp"
@@ -11,17 +12,30 @@ public:
         std::uniform_real_distribution<float>& odist,
         std::uniform_real_distribution<float>& rdist,
         std::uniform_real_distribution<float>& bdist );
+    Cube(Pipeline& pipeline, float r, const char* textureFP = "res/cube.png");
     void update(float ts) override;
     DirectX::XMMATRIX getTransformMatrix() const override;
 private:
     // Positional
-    float roll = 0.f;
-    float pitch = 0.f;
-    float yaw = 0.f;
-    float r, theta, phi, chi;
+    float roll   {deg2rad(180.f)};
+    float pitch  {0.f};
+    float yaw    {0.f};
+    
+    float r      {0.f};
+    float theta  {0.f};
+    float phi    {0.f};
+    float chi    {0.f};
+
+    float y      {0.f};
+    float z      {0.f};
 
     // Speed (delta/s)
-    float droll, dpitch, dyaw, dtheta, dphi, dchi;
+    float droll  {0.f};
+    float dpitch {0.f};
+    float dyaw   {0.f};
+    float dtheta {0.f};
+    float dphi   {0.f};
+    float dchi   {0.f};
 
     struct Vertex {
         DirectX::XMFLOAT3 pos;

@@ -6,12 +6,13 @@ Cinq::Cinq()
 Cinq::Cinq(int width, int height, const char* title)
     : window(width, height, title), width(width), height(height), title(title) {
 
-    Factory factory(window.getGraphicsPipeline());
-    drawables.reserve(drawableCount);
-    std::generate_n(std::back_inserter(drawables), drawableCount, factory);
+    drawables.push_back(
+        std::make_unique<Cube>(window.getGraphicsPipeline(), 0.f)
+    );
 
-    window.getGraphicsPipeline().setCamera(camera.getTransformMatrix());
-    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, .5f, 40.f));
+    // Factory factory(window.getGraphicsPipeline());
+    // drawables.reserve(drawableCount);
+    // std::generate_n(std::back_inserter(drawables), drawableCount, factory);
 }
 
 int Cinq::run() {
@@ -26,8 +27,12 @@ int Cinq::run() {
 void Cinq::update() {
     float ts = timer.markLap();
 
+    static float farClip = 1000.f;
+    static float nearClip = 2 / 3.f;
     float bgColor[4] {.1f, .1f, .1f, .1f};
     window.getGraphicsPipeline().clearBuffer(bgColor);
+    window.getGraphicsPipeline().setCamera(camera.getTransformMatrix());
+    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, nearClip, farClip));
 
     // Draw scene
     for (auto& drawable : drawables) {
@@ -42,15 +47,15 @@ void Cinq::update() {
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    static bool showDemo     = false;
     static bool showControls = true;
-    static bool showDemo  = false;
 
     if (showDemo) {
         ImGui::ShowDemoWindow(&showDemo);
     }
 
     // Scene controls overlay - Mostly copied from the demo
-    {
+    if (showControls) {
         static int location = 0;
         ImGuiWindowFlags windowFlags = 
             ImGuiWindowFlags_NoDecoration       |
@@ -59,7 +64,7 @@ void Cinq::update() {
             ImGuiWindowFlags_NoFocusOnAppearing |
             ImGuiWindowFlags_NoNav;
 
-        const float PAD = 10.0f;
+        const float PAD = 15.0f;
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImVec2 workspacePos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
         ImVec2 workspaceSize = viewport->WorkSize;
@@ -75,8 +80,26 @@ void Cinq::update() {
             ImGui::Text("Scene");
             ImGui::Separator();
             ImGui::Text("FPS: %d", (int)(1000/(t1*1000)));
-            ImGui::Text("Frametime: %.2fms", t1*1000);
+            ImGui::Text("Frametime: %.4fms", t1*1000);
             ImGui::Text("Since last update: %.2fms", ts*1000);
+            ImGui::Separator();
+
+            ImGui::Text("Camera");
+            ImGui::SliderFloat("Far Clip", &farClip, 0.f, 2500.f);
+            ImGui::SliderFloat("Near Clip", &nearClip, 0.f, 5.f);
+            ImGui::Separator();
+            ImGui::SliderFloat("R", &camera.r, 0.f, 20.f);
+            ImGui::SliderAngle("Theta", &camera.theta, -180.f, 180.f);
+            ImGui::SliderAngle("Phi", &camera.phi, -180.f, 180.f);
+            ImGui::Separator();
+            ImGui::SliderAngle("Roll", &camera.roll, -180.f, 180.f);
+            ImGui::SliderAngle("Pitch", &camera.pitch, -180.f, 180.f);
+            ImGui::SliderAngle("Yaw", &camera.yaw, -180.f, 180.f);
+            if (ImGui::Button("Reset")) {
+                camera.reset();
+                nearClip = 2 / 3.f;
+                farClip = 1000.f;
+            }
         }
         ImGui::End();
     }
