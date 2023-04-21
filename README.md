@@ -14,6 +14,9 @@
 ### Latest rendering capability (?)
 <img src="res/readme/render.png" width="540">
 
+### Notes
+Actions here don't server any purpose but I'm very intrigued by them so why not (ﾉ´ з `)ノ
+
 ## Dependencies
 - [nothings - stb](https://github.com/nothings/stb)
 - [ocornut - imgui](https://github.com/ocornut/imgui)
