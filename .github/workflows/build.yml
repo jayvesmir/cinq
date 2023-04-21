@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+# Very very simple very very
+jobs:
+  windows-release:
+    name: Windows-Release
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Configure CMake
+      shell: powershell
+      run: cmake -B build
+      
+    - name: Build
+      shell: powershell
+      run: cmake --build build --config Release -j 2
+  windows-debug:
+    name: Windows-Debug
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Configure CMake
+      shell: powershell
+      run: cmake -B build
+      
+    - name: Build
+      shell: powershell
+      run: cmake --build build --config Release -j 2
