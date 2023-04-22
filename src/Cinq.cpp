@@ -88,6 +88,60 @@ void Cinq::update() {
         ImGui::End();
     }
 
+    // Key actions
+
+    if (window.keyboard.keyIsPressed(VK_SPACE)) {
+        camera.setMoving(true);
+        char buf[256];
+        snprintf(buf, 256, "Cinq <Moving>");
+        window.setTitle(buf);
+    }
+
+    if (window.keyboard.keyIsPressed(VK_ESCAPE)) {
+        camera.setMoving(false);
+        char buf[256];
+        snprintf(buf, 256, "Cinq");
+        window.setTitle(buf);
+    }
+
+    if (window.keyboard.keyIsPressed('R'))
+        camera.reset();
+    
+    if (camera.isMoving()) {
+        // Forward
+        if (window.keyboard.keyIsPressed('W')) {
+            camera.translate({0.f, 0.f, ts});
+        }
+
+        // Backward
+        if (window.keyboard.keyIsPressed('S')) {
+            camera.translate({0.f, 0.f, -ts});
+        }
+
+        // Left
+        if (window.keyboard.keyIsPressed('A')) {
+            camera.translate({-ts, 0.f, 0.f});
+        }
+
+        // Right
+        if (window.keyboard.keyIsPressed('D')) {
+            camera.translate({ts, 0.f, 0.f});
+        }
+
+        // Up
+        if (window.keyboard.keyIsPressed('E')) {
+            camera.translate({0.0f, ts, 0.0f});
+        }
+
+        // Down
+        if (window.keyboard.keyIsPressed('Q')) {
+            camera.translate({0.0f, -ts, 0.0f});
+        }
+
+        // Using this because I've failed numerous times at trying to implement raw input ⊂(￣(ｴ)￣)⊃
+        camera.rotate(gui.getIO().MouseDelta.x, -gui.getIO().MouseDelta.y);
+    }
+
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     window.getGraphicsPipeline().presentBuffer();

@@ -8,4 +8,6 @@ class Imgui {
 public:
     Imgui();
     ~Imgui();
+
+    ImGuiIO getIO() { return ImGui::GetIO(); };
 };
