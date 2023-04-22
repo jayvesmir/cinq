@@ -3,16 +3,29 @@
 #include "Math.hpp"
 #include "Pipeline.hpp"
 
+#include <algorithm>
+
 class Camera {
 public:
-    DirectX::XMMATRIX getTransformMatrix() const;
-    void reset();
+    Camera();
 
-    float roll  = 0.f;
-    float pitch = 0.f;
-    float yaw   = 0.f;
-    float r     = 5.f;
-    float theta = 0.f;
-    float phi   = 0.f;
-    float chi   = 0.f;
+    void reset();
+    void createInterface();
+    DirectX::XMMATRIX getTransformMatrix() const;
+
+    float getFarClip() const { return farClip; }
+    float getNearClip() const { return nearClip; }
+
+private:
+    float r;
+    float phi;
+    float yaw;
+    float roll;
+    float pitch;
+    float theta;
+    float farClip;
+    float nearClip;
+
+    // Prep for using cartesian coordinates later on
+    DirectX::XMFLOAT3 pos;
 };

@@ -27,12 +27,10 @@ int Cinq::run() {
 void Cinq::update() {
     float ts = timer.markLap();
 
-    static float farClip = 1000.f;
-    static float nearClip = 2 / 3.f;
-    float bgColor[4] {.1f, .1f, .1f, .1f};
+    const float bgColor[4] {.1f, .1f, .1f, .1f};
     window.getGraphicsPipeline().clearBuffer(bgColor);
     window.getGraphicsPipeline().setCamera(camera.getTransformMatrix());
-    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, nearClip, farClip));
+    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, camera.getNearClip(), camera.getFarClip()));
 
     // Draw scene
     for (auto& drawable : drawables) {
@@ -85,25 +83,10 @@ void Cinq::update() {
             ImGui::Separator();
 
             ImGui::Text("Camera");
-            ImGui::SliderFloat("Far Clip", &farClip, 0.f, 2500.f);
-            ImGui::SliderFloat("Near Clip", &nearClip, 0.f, 5.f);
-            ImGui::Separator();
-            ImGui::SliderFloat("R", &camera.r, 0.f, 20.f);
-            ImGui::SliderAngle("Theta", &camera.theta, -180.f, 180.f);
-            ImGui::SliderAngle("Phi", &camera.phi, -180.f, 180.f);
-            ImGui::Separator();
-            ImGui::SliderAngle("Roll", &camera.roll, -180.f, 180.f);
-            ImGui::SliderAngle("Pitch", &camera.pitch, -180.f, 180.f);
-            ImGui::SliderAngle("Yaw", &camera.yaw, -180.f, 180.f);
-            if (ImGui::Button("Reset")) {
-                camera.reset();
-                nearClip = 2 / 3.f;
-                farClip = 1000.f;
-            }
+            camera.createInterface();
         }
         ImGui::End();
     }
-
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
