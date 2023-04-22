@@ -6,10 +6,16 @@ DirectX::XMMATRIX Camera::getTransformMatrix() const {
         DirectX::XMMatrixRotationRollPitchYaw(phi, -theta, 0.f)
     );
 
+    // Flip the camera upside down if going down from over the poles.
+    // Hard to explain, remove this code and try going over one of the poles
+    // you'll see why it's here
+    DirectX::XMVECTOR up = DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f);
+    if (std::abs(phi) >= deg2rad(90.f))
+        up = DirectX::XMVectorSet(0.f, -1.f, 0.f, 0.f);
+
     return (
         DirectX::XMMatrixLookAtLH(
-            pos, DirectX::XMVectorZero(),
-            DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f)
+            pos, DirectX::XMVectorZero(), up
         ) * 
         DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll)
     );

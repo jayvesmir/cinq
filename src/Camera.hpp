@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math.hpp"
 #include "Pipeline.hpp"
 
 class Camera {
