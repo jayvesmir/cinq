@@ -11,14 +11,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char *cmdLine, 
     const int height = width / aspectRatio;
     
     try {
-      Cinq cinq(width, height, "Cinq");
-      cinq.run();
+        Cinq cinq(width, height, "Cinq");
+        cinq.run();
     } catch (const CinqException &e) {
-      MessageBox(nullptr, e.what(), e.getType(), MB_OK | MB_ICONERROR);
+        MessageBox(nullptr, e.what(), e.getType(), MB_OK | MB_ICONERROR);
     } catch (const std::exception &e) {
-      MessageBox(nullptr, e.what(), "Exception", MB_OK | MB_ICONERROR);
+        MessageBox(nullptr, e.what(), "Exception", MB_OK | MB_ICONERROR);
     } catch (...) {
-      MessageBox(nullptr, "Unknown error", "Unknown Error", MB_OK | MB_ICONERROR);
+        MessageBox(nullptr, "Unknown error", "Unknown Error", MB_OK | MB_ICONERROR);
     }
     
     return -1;
