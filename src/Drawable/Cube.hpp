@@ -1,7 +1,7 @@
 #pragma once
-#include "Math.hpp"
-#include "Geometry.hpp"
+#include "Core/Math.hpp"
 #include "DrawableBase.hpp"
+#include "Core/Geometry.hpp"
 #include "Bindable/Bindables.hpp"
 
 class Cube : public DrawableBase<Cube> {

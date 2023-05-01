@@ -1,9 +1,10 @@
 #pragma once
+#include "Core/Pipeline.hpp"
+#include "Bindable/IndexBuffer.hpp"
+
 #include <memory>
 #include <random>
 #include <vector>
-#include "Pipeline.hpp"
-#include "Bindable/IndexBuffer.hpp"
 
 class Bindable;
 

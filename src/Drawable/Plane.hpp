@@ -1,7 +1,7 @@
 #pragma once
-#include "Image.hpp"
-#include "Geometry.hpp"
+#include "Core/Image.hpp"
 #include "DrawableBase.hpp"
+#include "Core/Geometry.hpp"
 #include "Bindable/Bindables.hpp"
 
 class Plane : public DrawableBase<Plane> {

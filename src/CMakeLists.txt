@@ -10,20 +10,12 @@ endif()
 add_executable(
     ${PROJECT_NAME}
     WIN32
-    ../res/Cinq.rc
-    Cinq.cpp
-    Mouse.cpp
-    Image.cpp
-    Imgui.cpp
-    Timer.cpp
-    Camera.cpp
-    Window.cpp
     Ayanami.cpp
-    Pipeline.cpp
-    Keyboard.cpp
-    Exception.cpp
+    ../res/Cinq.rc
 )
 
+add_subdirectory(Core)
+add_subdirectory(Window)
 add_subdirectory(Bindable)
 add_subdirectory(Drawable)
 
@@ -34,10 +26,11 @@ target_link_libraries(
     d3d11
     d3dcompiler
 
+    cinq-core
+    cinq-window
     cinq-bindable
     cinq-drawable
 )
-
 
 # Build HLSL shaders
 add_custom_target(shaders)

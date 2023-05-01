@@ -10,6 +10,14 @@ Cinq::Cinq(int width, int height, const char* title)
         std::make_unique<Cube>(window.getGraphicsPipeline(), 0.f)
     );
 
+    drawables.push_back(
+        std::make_unique<Cube>(window.getGraphicsPipeline(), 1.5f)
+    );
+
+    drawables.push_back(
+        std::make_unique<Cube>(window.getGraphicsPipeline(), -1.5f)
+    );
+
     // Factory factory(window.getGraphicsPipeline());
     // drawables.reserve(drawableCount);
     // std::generate_n(std::back_inserter(drawables), drawableCount, factory);

@@ -1,7 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 
-#include "Math.hpp"
+#include "Core/Math.hpp"
 #include "IndexedTriangleList.hpp"
 
 namespace Geometry {

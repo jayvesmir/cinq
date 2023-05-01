@@ -5,7 +5,7 @@
 #include <cassert>
 
 #include "Color.hpp"
-#include "Exception.hpp"
+#include "Window/Exception.hpp"
 
 class Image {
 public:

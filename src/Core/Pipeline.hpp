@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Imgui.hpp"
-#include "Windows.hpp"
+#include "Window/Imgui.hpp"
+#include "Window/Windows.hpp"
 
 #include <list>
 

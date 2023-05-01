@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Image.hpp"
 #include "Bindable.hpp"
+#include "Core/Image.hpp"
 
 class Texture : public Bindable {
 public:

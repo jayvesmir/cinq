@@ -2,7 +2,7 @@
 #include <vector>
 #include <array>
 
-#include "../Math.hpp"
+#include "Core/Math.hpp"
 #include "IndexedTriangleList.hpp"
 
 namespace Geometry {

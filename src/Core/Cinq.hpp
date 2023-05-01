@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Math.hpp"
-#include "Imgui.hpp"
 #include "Image.hpp"
 #include "Timer.hpp"
 #include "Camera.hpp"
-#include "Window.hpp"
+#include "Window/Imgui.hpp"
+#include "Window/Window.hpp"
 #include "Drawable/Drawables.hpp"
 
 #include <ctime>

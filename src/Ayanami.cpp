@@ -1,7 +1,7 @@
-#include "Cinq.hpp"
-#include "Window.hpp"
-#include "Windows.hpp"
-#include "Exception.hpp"
+#include "Core/Cinq.hpp"
+#include "Window/Window.hpp"
+#include "Window/Windows.hpp"
+#include "Window/Exception.hpp"
 
 // TODO: More/better error handling
 

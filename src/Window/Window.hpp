@@ -3,8 +3,8 @@
 #include "Mouse.hpp"
 #include "Windows.hpp"
 #include "Keyboard.hpp"
-#include "Pipeline.hpp"
 #include "Exception.hpp"
+#include "Core/Pipeline.hpp"
 #include "../res/Resource.hpp"
 
 #include <optional>
