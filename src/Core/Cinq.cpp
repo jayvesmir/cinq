@@ -32,10 +32,11 @@ int Cinq::run() {
     return error;
 }
 
+static constexpr float bgColor[4] {0.1f, 0.1f, 0.12f, 1.f};
+
 void Cinq::update() {
     float ts = timer.markLap();
 
-    const float bgColor[4] {.1f, .1f, .1f, .1f};
     window.getGraphicsPipeline().clearBuffer(bgColor);
     window.getGraphicsPipeline().setCamera(camera.getTransformMatrix());
     window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, camera.getNearClip(), camera.getFarClip()));
