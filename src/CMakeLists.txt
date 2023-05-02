@@ -22,10 +22,7 @@ add_subdirectory(Drawable)
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
-    imgui
-    d3d11
-    d3dcompiler
-
+    cinq-lib
     cinq-core
     cinq-window
     cinq-bindable
@@ -37,6 +34,8 @@ add_custom_target(shaders)
 file(MAKE_DIRECTORY ${SHADER_DIR})
 set(
     SHADERS
+    Shader/PhongVS.hlsl
+    Shader/PhongPS.hlsl
     Shader/TextureVS.hlsl
     Shader/TexturePS.hlsl
     Shader/ColorIndexVS.hlsl
@@ -45,6 +44,8 @@ set(
     Shader/ColorBlendPS.hlsl
 )
 
+set_source_files_properties(Shader/PhongVS.hlsl PROPERTIES shaderType "vs")
+set_source_files_properties(Shader/PhongPS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/TextureVS.hlsl PROPERTIES shaderType "vs")
 set_source_files_properties(Shader/TexturePS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/ColorIndexVS.hlsl PROPERTIES shaderType "vs")

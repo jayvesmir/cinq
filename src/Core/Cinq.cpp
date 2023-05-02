@@ -5,7 +5,6 @@ Cinq::Cinq()
 
 Cinq::Cinq(int width, int height, const char* title)
     : window(width, height, title), width(width), height(height), title(title) {
-
     drawables.push_back(
         std::make_unique<Cube>(window.getGraphicsPipeline(), 0.f)
     );
@@ -152,6 +151,5 @@ void Cinq::update() {
     }
 
     ImGui::Render();
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     window.getGraphicsPipeline().presentBuffer();
 }

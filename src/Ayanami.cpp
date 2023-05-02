@@ -1,4 +1,5 @@
 #include "Core/Cinq.hpp"
+#include "Core/Logger.hpp"
 #include "Window/Window.hpp"
 #include "Window/Windows.hpp"
 #include "Window/Exception.hpp"
@@ -6,6 +7,10 @@
 // TODO: More/better error handling
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char *cmdLine, int cmdShow) {
+
+    Logger::allocConsole();
+    Logger::bindConsoleOutput();
+
     const float aspectRatio = 16 / 9.;
     const int width = 1440;
     const int height = width / aspectRatio;

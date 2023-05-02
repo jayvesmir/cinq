@@ -4,6 +4,7 @@
 #include "Image.hpp"
 #include "Timer.hpp"
 #include "Camera.hpp"
+#include "Logger.hpp"
 #include "Window/Imgui.hpp"
 #include "Window/Window.hpp"
 #include "Drawable/Drawables.hpp"

@@ -21,6 +21,8 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     swapchainDesc.Flags = NULL;
 
+    Logger::trace("Haiii ^w^");
+
     D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
@@ -98,6 +100,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
 }
 
 void Pipeline::presentBuffer() {
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     swapchain->Present(1, NULL);
 }
 
