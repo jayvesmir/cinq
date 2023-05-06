@@ -35,6 +35,7 @@ static constexpr float bgColor[4] {0.1f, 0.1f, 0.12f, 1.f};
 
 void Cinq::update() {
     float ts = timer.markLap();
+    ImGuiIO io = gui.getIO();
 
     window.getGraphicsPipeline().clearBuffer(bgColor);
     window.getGraphicsPipeline().setCamera(camera.getTransformMatrix());
@@ -96,58 +97,54 @@ void Cinq::update() {
         ImGui::End();
     }
 
-    // Key actions
+    /* Key actions */
 
     if (window.keyboard.keyIsPressed(VK_SPACE)) {
-        camera.setMoving(true);
+        camera.setFPS(true);
         char buf[256];
-        snprintf(buf, 256, "Cinq <Moving>");
+        snprintf(buf, 256, "Cinq <FPS>");
         window.setTitle(buf);
+        window.hideCursor();
     }
 
     if (window.keyboard.keyIsPressed(VK_ESCAPE)) {
-        camera.setMoving(false);
+        camera.setFPS(false);
         char buf[256];
         snprintf(buf, 256, "Cinq");
         window.setTitle(buf);
+        window.showCursor();
     }
 
     if (window.keyboard.keyIsPressed('R'))
         camera.reset();
     
-    if (camera.isMoving()) {
+    if (camera.isFPS()) {
         // Forward
-        if (window.keyboard.keyIsPressed('W')) {
+        if (window.keyboard.keyIsPressed('W'))
             camera.translate({0.f, 0.f, ts});
-        }
 
         // Backward
-        if (window.keyboard.keyIsPressed('S')) {
+        if (window.keyboard.keyIsPressed('S'))
             camera.translate({0.f, 0.f, -ts});
-        }
 
         // Left
-        if (window.keyboard.keyIsPressed('A')) {
+        if (window.keyboard.keyIsPressed('A'))
             camera.translate({-ts, 0.f, 0.f});
-        }
 
         // Right
-        if (window.keyboard.keyIsPressed('D')) {
+        if (window.keyboard.keyIsPressed('D'))
             camera.translate({ts, 0.f, 0.f});
-        }
 
         // Up
-        if (window.keyboard.keyIsPressed('E')) {
+        if (window.keyboard.keyIsPressed('Q'))
             camera.translate({0.0f, ts, 0.0f});
-        }
 
         // Down
-        if (window.keyboard.keyIsPressed('Q')) {
+        if (window.keyboard.keyIsPressed('E'))
             camera.translate({0.0f, -ts, 0.0f});
-        }
 
         // Using this because I've failed numerous times at trying to implement raw input ⊂(￣(ｴ)￣)⊃
-        camera.rotate(gui.getIO().MouseDelta.x, -gui.getIO().MouseDelta.y);
+        camera.rotate(io.MouseDelta.x, io.MouseDelta.y);
     }
 
     ImGui::Render();

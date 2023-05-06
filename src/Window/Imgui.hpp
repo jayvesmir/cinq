@@ -9,5 +9,5 @@ public:
     Imgui();
     ~Imgui();
 
-    ImGuiIO getIO() { return ImGui::GetIO(); };
+    static ImGuiIO getIO() { return ImGui::GetIO(); };
 };

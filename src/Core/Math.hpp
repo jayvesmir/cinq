@@ -2,12 +2,18 @@
 #include <cmath>
 
 #define PI 3.141592653589793238462643383279502884L
+#define PI_F 3.141592653589793238462643383279502884f
 
 // Chili
 template<typename T>
 T wrapAngle(T theta) {
-    const T modded = std::fmod(theta, (T)2.0 * (T)PI);
-    return (modded > (T)PI) ? (modded - (T)2.0 * (T)PI) : modded;
+    constexpr T twoPI = (T)2 * (T)PI;
+    const T mod = std::fmod(theta, twoPI);
+    if (mod > (T)PI)
+        return mod - twoPI;
+    else if (mod < -(T)PI)
+        return mod + twoPI;
+    return mod;
 }
 
 template<typename T>

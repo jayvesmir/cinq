@@ -73,6 +73,12 @@ void Window::setTitle(const char* title) {
     }
 }
 
+void Window::setCursor(int x, int y) {
+    RECT rect;
+    GetWindowRect(window, &rect);
+    SetCursorPos(rect.left + x, rect.top + y);
+}
+
 bool Window::processMessages(int* exitCode) {
     MSG msg;
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {

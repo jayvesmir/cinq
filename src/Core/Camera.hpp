@@ -15,10 +15,10 @@ public:
     void translate(DirectX::XMFLOAT3 offset);
     DirectX::XMMATRIX getTransformMatrix() const;
 
-    bool isMoving() const { return moving; }
-    void setMoving(bool val) { moving = val; }
-    float getFarClip() const { return farClip; }
-    float getNearClip() const { return nearClip; }
+    inline void setFPS(bool val) { moving = val; }
+    inline bool isFPS() const { return moving; }
+    inline float getFarClip() const { return farClip; }
+    inline float getNearClip() const { return nearClip; }
 
 private:
     float r;

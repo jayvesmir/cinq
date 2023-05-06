@@ -6,7 +6,7 @@ Camera::Camera() {
 
 void Camera::rotate(float x, float y) {
     yaw = wrapAngle(yaw + x * rotationSpeed);
-    pitch = std::clamp(pitch + y * rotationSpeed, (float)-PI / 2.f, (float)PI / 2.f);
+    pitch = std::clamp(pitch + y * rotationSpeed, .995f * -PI_F / 2.f, .995f * PI_F / 2.f);
 }
 
 void Camera::translate(DirectX::XMFLOAT3 offset) {
@@ -26,10 +26,14 @@ void Camera::translate(DirectX::XMFLOAT3 offset) {
 
 DirectX::XMMATRIX Camera::getTransformMatrix() const {
     if (moving) {
-        return (
-            DirectX::XMMatrixTranslation(-pos.x, -pos.y, -pos.z) *
-            DirectX::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll)
+        DirectX::XMVECTOR forward = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);
+        DirectX::XMVECTOR direction = DirectX::XMVector3Transform(
+            forward, DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll)
         );
+
+        DirectX::XMVECTOR camPosition = DirectX::XMLoadFloat3(&pos);
+        DirectX::XMVECTOR camTarget = DirectX::XMVectorAdd(camPosition, direction);
+        return DirectX::XMMatrixLookAtLH(camPosition, camTarget, DirectX::XMVectorSet(0.f, 1.f, 0.f, 0.f));
     }
 
     const DirectX::XMVECTOR pos = DirectX::XMVector3Transform(

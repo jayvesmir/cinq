@@ -63,9 +63,14 @@ public:
     }
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
+
     void setTitle(const char* title = nullptr);
     const char* getTitle() { return title; }
     static bool processMessages(int* exitCode);
+    static void hideCursor() { while (ShowCursor(false) >= 0); }
+    static void showCursor() { while (ShowCursor(true) < 0); }
+    void setCursor(int x, int y);
+
     Pipeline& getGraphicsPipeline() { return *pipeline; }
 };
 
