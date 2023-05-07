@@ -102,6 +102,7 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
 void Pipeline::presentBuffer() {
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     swapchain->Present(1, NULL);
+    //                ~|~ Set to 0 to disable V-Sync
 }
 
 void Pipeline::draw(size_t count) {

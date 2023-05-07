@@ -1,10 +1,10 @@
 #include "Cinq.hpp"
 
 Cinq::Cinq()
-    : window(1280, 720, "Cinq"), width(1280), height(720), title("Cinq") {}
+    : window(1280, 720, "Cinq"), width(1280), height(720), title("Cinq"), aspectRatio((float)width / height) {}
 
 Cinq::Cinq(int width, int height, const char* title)
-    : window(width, height, title), width(width), height(height), title(title) {
+    : window(width, height, title), width(width), height(height), title(title), aspectRatio((float)width / height) {
     drawables.push_back(
         std::make_unique<Cube>(window.getGraphicsPipeline(), 0.f)
     );
@@ -39,7 +39,7 @@ void Cinq::update() {
 
     window.getGraphicsPipeline().clearBuffer(bgColor);
     window.getGraphicsPipeline().setCamera(camera.getTransformMatrix());
-    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveLH(1.f, (float)height / width, camera.getNearClip(), camera.getFarClip()));
+    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveFovLH(camera.getFOV(), aspectRatio, camera.getNearClip(), camera.getFarClip()));
 
     // Draw scene
     for (auto& drawable : drawables) {
@@ -71,6 +71,10 @@ void Cinq::update() {
             ImGuiWindowFlags_NoFocusOnAppearing |
             ImGuiWindowFlags_NoNav;
 
+        ImGuiWindowFlags cameraWindowFlags = 
+            ImGuiWindowFlags_AlwaysAutoResize   |
+            ImGuiWindowFlags_NoFocusOnAppearing;
+
         const float PAD = 15.0f;
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImVec2 workspacePos = viewport->WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
@@ -83,16 +87,17 @@ void Cinq::update() {
         ImGui::SetNextWindowPos(position, ImGuiCond_Always, posPivot);
         windowFlags |= ImGuiWindowFlags_NoMove;
 
+        ImGui::SetNextWindowBgAlpha(0.75f);
         if (ImGui::Begin("Scene", &showControls, windowFlags)) {
             ImGui::Text("Scene");
             ImGui::Separator();
             ImGui::Text("FPS: %d", (int)(1000/(t1*1000)));
             ImGui::Text("Frametime: %.4fms", t1*1000);
             ImGui::Text("Since last update: %.2fms", ts*1000);
-            ImGui::Separator();
 
-            ImGui::Text("Camera");
-            camera.createInterface();
+            ImGui::SetNextWindowBgAlpha(0.75f);
+            if (ImGui::Begin("Camera", &showControls, cameraWindowFlags))
+                camera.createInterface();
         }
         ImGui::End();
     }
@@ -108,15 +113,12 @@ void Cinq::update() {
     }
 
     if (window.keyboard.keyIsPressed(VK_ESCAPE)) {
-        camera.setFPS(false);
+        camera.reset();
         char buf[256];
         snprintf(buf, 256, "Cinq");
         window.setTitle(buf);
         window.showCursor();
     }
-
-    if (window.keyboard.keyIsPressed('R'))
-        camera.reset();
     
     if (camera.isFPS()) {
         // Forward

@@ -19,9 +19,11 @@ public:
     inline bool isFPS() const { return moving; }
     inline float getFarClip() const { return farClip; }
     inline float getNearClip() const { return nearClip; }
+    inline float getFOV() const { return fov; }
 
 private:
     float r;
+    float fov;
     float phi;
     float yaw;
     float roll;

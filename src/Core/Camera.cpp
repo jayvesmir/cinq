@@ -57,6 +57,7 @@ DirectX::XMMATRIX Camera::getTransformMatrix() const {
 }
 
 void Camera::createInterface() {
+    ImGui::SliderAngle("FOV", &fov, 0.f, 180.f);
     ImGui::SliderFloat("Far Clip", &farClip, 0.f, 2500.f);
     ImGui::SliderFloat("Near Clip", &nearClip, 0.f, 5.f);
     ImGui::SliderFloat("Movement Speed", &movementSpeed, 0.f, 20.f);
@@ -81,13 +82,14 @@ void Camera::createInterface() {
 
 void Camera::reset() {
     r        = 5.f;
+    fov      = deg2rad(100 / 3.f);
     phi      = 0.f;
     yaw      = 0.f;
     roll     = 0.f;
     pitch    = 0.f;
     theta    = 0.f;
     farClip  = 1000.f;
-    nearClip = 2 / 3.f;
+    nearClip = 1 / 50.f;
 
     // Prep for using cartesian coordinates later on
     pos      = {0.f, 0.f, -5.f};

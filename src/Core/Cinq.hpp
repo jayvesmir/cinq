@@ -27,6 +27,7 @@ private:
     Camera camera;
     const char* title;
     int width, height;
+    float aspectRatio;
     std::vector<std::unique_ptr<Drawable>> drawables;
     const uint32_t drawableCount = 128;
 
