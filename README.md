@@ -20,3 +20,4 @@ Actions here don't serve any purpose but I'm very intrigued by them so why not (
 ## Dependencies
 - [nothings - stb](https://github.com/nothings/stb)
 - [ocornut - imgui](https://github.com/ocornut/imgui)
+- [agauniyal - rang](https://github.com/agauniyal/rang)
