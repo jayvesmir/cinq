@@ -7,7 +7,7 @@ class Timer {
 public:
     Timer();
 
-    static void wait(int seconds);
+    static void wait(int milliseconds);
     float markLap();
     float sinceStart();
     float sinceLastLap();

@@ -7,12 +7,8 @@
 // TODO: More/better error handling
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char *cmdLine, int cmdShow) {
-
-    Logger::allocConsole();
-    Logger::bindConsoleOutput();
-
-    const float aspectRatio = 16 / 9.;
-    const int width = 1440;
+    const int width = 1600;
+    const float aspectRatio = 2 / 1.;
     const int height = width / aspectRatio;
     
     try {

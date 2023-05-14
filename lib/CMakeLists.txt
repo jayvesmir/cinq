@@ -40,6 +40,7 @@ target_include_directories(
 target_link_libraries(
     cinq-lib
     INTERFACE
+    dxgi
     imgui
     d3d11
     d3dcompiler

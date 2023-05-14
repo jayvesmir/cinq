@@ -8,6 +8,11 @@ public:
     
     void bind(Pipeline& pipeline) override;
 protected:
+    struct Transforms {
+        DirectX::XMMATRIX model;
+        DirectX::XMMATRIX modelViewProjection;
+    };
+
     const Drawable& parent;
-    static std::unique_ptr<VertexCBuffer<DirectX::XMMATRIX>> constantBuffer;
+    static std::unique_ptr<VertexCBuffer<Transforms>> constantBuffer;
 };

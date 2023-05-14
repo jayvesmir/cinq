@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Logger.hpp"
 #include "Core/Pipeline.hpp"
 
 #include <vector>

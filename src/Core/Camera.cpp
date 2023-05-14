@@ -25,7 +25,7 @@ void Camera::translate(DirectX::XMFLOAT3 offset) {
 }
 
 DirectX::XMMATRIX Camera::getTransformMatrix() const {
-    if (moving) {
+    if (fpsControls) {
         DirectX::XMVECTOR forward = DirectX::XMVectorSet(0.f, 0.f, 1.f, 0.f);
         DirectX::XMVECTOR direction = DirectX::XMVector3Transform(
             forward, DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll)
@@ -38,7 +38,7 @@ DirectX::XMMATRIX Camera::getTransformMatrix() const {
 
     const DirectX::XMVECTOR pos = DirectX::XMVector3Transform(
         DirectX::XMVectorSet(0.f, 0.f, -r, 0.f),
-        DirectX::XMMatrixRotationRollPitchYaw(phi, -theta, 0.f)
+        DirectX::XMMatrixRotationRollPitchYaw(phi, -theta, roll)
     );
 
     // Flip the camera upside down if going down from over the poles.
@@ -60,22 +60,22 @@ void Camera::createInterface() {
     ImGui::SliderAngle("FOV", &fov, 0.f, 180.f);
     ImGui::SliderFloat("Far Clip", &farClip, 0.f, 2500.f);
     ImGui::SliderFloat("Near Clip", &nearClip, 0.f, 5.f);
-    ImGui::SliderFloat("Movement Speed", &movementSpeed, 0.f, 20.f);
+    ImGui::SliderFloat("Movement Speed", &movementSpeed, 0.f, 80.f);
     ImGui::SliderFloat("Mouse Sensitivity", &rotationSpeed, 0.f, .01f);
     ImGui::Separator();
-    if (moving) {
-        ImGui::SliderFloat("X", &pos.x, -20.f, 10.f);
-        ImGui::SliderFloat("Y", &pos.y, -20.f, 10.f);
-        ImGui::SliderFloat("Z", &pos.z, -20.f, 10.f);
+    if (fpsControls) {
+        ImGui::SliderFloat3("XYZ", (float*)&pos, -10.f, 10.f);
     } else {
         ImGui::SliderFloat("R", &r, -10.f, 20.f);
         ImGui::SliderAngle("Phi", &phi, -180.f, 180.f);
         ImGui::SliderAngle("Theta", &theta, -180.f, 180.f);
     }
+
     ImGui::Separator();
     ImGui::SliderAngle("Yaw", &yaw, -180.f, 180.f);
     ImGui::SliderAngle("Roll", &roll, -180.f, 180.f);
     ImGui::SliderAngle("Pitch", &pitch, -180.f, 180.f);
+    
     if (ImGui::Button("Reset"))
         reset();
 }
@@ -94,7 +94,7 @@ void Camera::reset() {
     // Prep for using cartesian coordinates later on
     pos      = {0.f, 0.f, -5.f};
 
-    moving = false;
+    fpsControls = false;
     movementSpeed = 5.f;
     rotationSpeed = .002f;
 }

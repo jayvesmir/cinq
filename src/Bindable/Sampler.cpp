@@ -10,7 +10,9 @@ Sampler::Sampler(Pipeline& pipeline) {
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
 
     // create the sampler
-    getDevice(pipeline)->CreateSamplerState(&samplerDesc, &sampler);
+    LOG_ERROR(
+        getDevice(pipeline)->CreateSamplerState(&samplerDesc, &sampler
+    ), "[Sampler] Failed to create sampler state");
 }
 
 void Sampler::bind(Pipeline& pipeline) {

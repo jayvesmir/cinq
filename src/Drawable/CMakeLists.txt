@@ -9,6 +9,7 @@ add_library(
     Sphere.cpp
     Pyramid.cpp
     Drawable.cpp
+    PointLight.cpp
 )
 
 target_link_libraries(

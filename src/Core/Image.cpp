@@ -20,15 +20,14 @@ void Image::copyBuffer(const Image& src) {
 }
 
 Image Image::load(const char* filepath) {
+    Logger::trace(std::string("[Utils] Loading image: ") + filepath);
     int width, height, comp;
     
     // Check for any errors regarding the image
     if (stbi_info(filepath, &width, &height, &comp) != 1) {
-        char buf[256];
-        snprintf(buf, 256, "Invalid file: %s", filepath);
-        throw CINQ_IMAGE_EXCEPT(buf);
+        LOG_ERROR(-1, std::string("[Utils] Invalid image: ") + filepath);
     } if (comp < 3) {
-        throw CINQ_IMAGE_EXCEPT("Unsupported color format");
+        LOG_ERROR(-1, std::string("[Utils] Unsupported coor format in image: ") + filepath);
     }
 
     // Decode image                                   force RGBA ~|~
@@ -50,7 +49,9 @@ Image Image::load(const char* filepath) {
     }
 
     stbi_image_free(data);
-    return Image(width, height, pixels, comp);
+    Image ret(width, height, pixels, comp);
+    ret.filepath = filepath;
+    return ret;
 }
 
 void Image::save(const char* filepath) {

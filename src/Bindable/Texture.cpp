@@ -25,7 +25,9 @@ Texture::Texture(Pipeline& pipeline, const Image& image) {
 
     // Actually create the texture
     wrl::ComPtr<ID3D11Texture2D> texture;
-    getDevice(pipeline)->CreateTexture2D(&textureDesc, &textureSubData, &texture);
+    LOG_ERROR(
+        getDevice(pipeline)->CreateTexture2D(&textureDesc, &textureSubData, &texture
+    ), std::string("[Bindable] failed to create texture: ") + image.filepath);
 
     // Create a view for the texture
     D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc{};
@@ -34,7 +36,9 @@ Texture::Texture(Pipeline& pipeline, const Image& image) {
     viewDesc.Texture2D.MipLevels = 1;
     viewDesc.Texture2D.MostDetailedMip = 0;
 
-    getDevice(pipeline)->CreateShaderResourceView(texture.Get(), &viewDesc, textureView.GetAddressOf());
+    LOG_ERROR(
+        getDevice(pipeline)->CreateShaderResourceView(texture.Get(), &viewDesc, textureView.GetAddressOf()
+    ), std::string("[Bindable] failed to create texture: ") + image.filepath);
 }
 
 void Texture::bind(Pipeline& pipeline) {

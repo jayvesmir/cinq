@@ -13,6 +13,7 @@
 #include <memory>
 #include <random>
 #include <cstdlib>
+#include <execution>
 
 class Cinq {
 public:
@@ -25,11 +26,13 @@ private:
     Timer timer;
     Window window;
     Camera camera;
+    PointLight light;
+    
     const char* title;
     int width, height;
     float aspectRatio;
     std::vector<std::unique_ptr<Drawable>> drawables;
-    const uint32_t drawableCount = 128;
+    const uint32_t drawableCount = 256;
 
     void update();
 
@@ -41,21 +44,12 @@ private:
         std::unique_ptr<Drawable> operator()(){
             switch(typedist(rng)) {
             case 0:
-                return std::make_unique<Pyramid>(
-                    pipeline, rng, adist, ddist,
-                    odist, rdist
-                );
             case 1:
-                return std::make_unique<Cube>(
+                return std::make_unique<CubeSolid>(
                     pipeline, rng, adist,ddist,
                     odist, rdist, bdist
                 );
             case 2:
-                return std::make_unique<Sphere>(
-                    pipeline, rng, adist, ddist,
-                    odist, rdist, yDist, xDist
-                );
-            case 3:
                 return std::make_unique<Plane>(
                     pipeline, rng, adist, ddist,
                     odist, rdist
@@ -75,6 +69,6 @@ private:
         std::uniform_real_distribution<float> bdist { .4f, PI };
         std::uniform_int_distribution<int> xDist    { 5  , 20 };
         std::uniform_int_distribution<int> yDist    { 10 , 30 };
-        std::uniform_int_distribution<int> typedist { 0  , 3 };
+        std::uniform_int_distribution<int> typedist { 0  , 1 };
     };
 };

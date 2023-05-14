@@ -57,3 +57,9 @@ Imgui::Imgui() {
 Imgui::~Imgui() {
     ImGui::DestroyContext();
 }
+
+void Imgui::newFrame() {
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+}

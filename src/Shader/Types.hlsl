@@ -15,9 +15,13 @@ cbuffer colorCBuffer {
     float4 faceColors[8];
 };
 
+cbuffer SolidCBuffer{
+    float4 color;
+};
+
 struct TextureVSOut {
-    float2 texCoord : TextureCoordinate;
     float4 pos : SV_Position;
+    float2 texCoord : TextureCoordinate;
 };
 
 struct ColorBlendVSOut {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Logger.hpp"
+
 #include <cstdio>
 #include <string>
 #include <exception>

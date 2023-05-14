@@ -38,8 +38,21 @@ namespace Logger {
         return oss.str();
     }
 
+    std::wstring formatTimeW(Severity severity) {
+        time_t t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+
+        std::wostringstream oss;
+        oss << L"[" << severityStringsW.at(severity) << L" " << std::put_time<wchar_t>(&tm, L"%D %T") << L"] ";
+        return oss.str();
+    }
+
     void logCore(Severity severity, const std::string& msg) {
-        std::cout << severityColors.at(severity) << formatTime(severity) << rang::fg::reset << msg << '\n';
+        std::clog << severityColors.at(severity) << formatTime(severity) << rang::fg::reset << msg << '\n';
+    }
+    
+    void logCoreW(Severity severity, const std::wstring& msg) {
+        std::wclog << severityColorsW.at(severity) << formatTimeW(severity) << L"\033[0m" << msg << '\n';
     }
 
     void trace(const std::string& msg)    { logCore(Trace, msg);    }
@@ -48,4 +61,11 @@ namespace Logger {
     void warning(const std::string& msg)  { logCore(Warning, msg);  }
     void error(const std::string& msg)    { logCore(Error, msg);    }
     void critical(const std::string& msg) { logCore(Critical, msg); }
+
+    void traceW(const std::wstring& msg)    { logCoreW(Trace, msg);    }
+    void debugW(const std::wstring& msg)    { logCoreW(Debug, msg);    }
+    void infoW(const std::wstring& msg)     { logCoreW(Info, msg);     }
+    void warningW(const std::wstring& msg)  { logCoreW(Warning, msg);  }
+    void errorW(const std::wstring& msg)    { logCoreW(Error, msg);    }
+    void criticalW(const std::wstring& msg) { logCoreW(Critical, msg); }
 } // namespace Logger 

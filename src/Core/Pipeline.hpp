@@ -6,6 +6,7 @@
 
 #include <list>
 
+#include <dxgi.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
@@ -30,6 +31,8 @@ public:
     void setCamera(DirectX::XMMATRIX camera) { this->camera = camera; }
     void setProjection(DirectX::XMMATRIX projection) { this->projection = projection; }
 
+    bool vsync = 1;
+    wrl::ComPtr<IDXGIAdapter> adapter;
 private:
     int width, height;
     

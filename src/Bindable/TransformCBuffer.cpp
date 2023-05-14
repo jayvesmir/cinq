@@ -3,20 +3,23 @@
 TransformCBuffer::TransformCBuffer(Pipeline& pipeline, const Drawable& parent) 
     : parent(parent) {
     if (!constantBuffer) {
-        constantBuffer = std::make_unique<VertexCBuffer<DirectX::XMMATRIX>>(pipeline);
+        constantBuffer = std::make_unique<VertexCBuffer<Transforms>>(pipeline);
     }
 }
 
 void TransformCBuffer::bind(Pipeline& pipeline) {
-    constantBuffer->update(pipeline, 
+    auto model = parent.getTransformMatrix();
+    const Transforms tf = {
+        DirectX::XMMatrixTranspose(model),
         DirectX::XMMatrixTranspose(
-            parent.getTransformMatrix() *
+            model                       *
             pipeline.getCamera()        *
             pipeline.getProjection()
         )
-    );
+    };
 
+    constantBuffer->update(pipeline, tf);
     constantBuffer->bind(pipeline);
 }
 
-std::unique_ptr<VertexCBuffer<DirectX::XMMATRIX>> TransformCBuffer::constantBuffer;
+std::unique_ptr<VertexCBuffer<TransformCBuffer::Transforms>> TransformCBuffer::constantBuffer;

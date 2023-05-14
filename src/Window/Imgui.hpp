@@ -10,4 +10,5 @@ public:
     ~Imgui();
 
     static ImGuiIO getIO() { return ImGui::GetIO(); };
+    static void newFrame();
 };

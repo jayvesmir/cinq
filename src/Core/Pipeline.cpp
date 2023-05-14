@@ -21,9 +21,17 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     swapchainDesc.Flags = NULL;
 
-    Logger::trace("Haiii ^w^");
+    Logger::trace("[Pipeline] Creating Device and Swapchain");
 
-    D3D11CreateDeviceAndSwapChain(
+    IDXGIFactory* dxgiFactory;
+    LOG_ERROR(
+        CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&dxgiFactory),
+        "[Pipeline] Failed to create adapter factory");
+    dxgiFactory->EnumAdapters(0, &adapter);
+    dxgiFactory->Release();
+    
+    LOG_ERROR(
+        D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
@@ -36,24 +44,33 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
         device.GetAddressOf(),
         nullptr,
         deviceContext.GetAddressOf()
-    );
+    ), "[Pipeline] Failed to create device and swapchain");
+
+    DXGI_ADAPTER_DESC adapterDesc;
+    adapter->GetDesc(&adapterDesc);
+    Logger::infoW(std::format(L"[Pipeline] Using adapter: {} (id: {})", adapterDesc.Description, adapterDesc.DeviceId));
+
+    Logger::trace(std::format("[Pipeline] Creating render targets"));
 
     // Create render target
     wrl::ComPtr<ID3D11Resource> backBuffer;
     swapchain->GetBuffer(0, __uuidof(ID3D11Resource), &backBuffer);
-    device->CreateRenderTargetView(
+    LOG_ERROR(
+        device->CreateRenderTargetView(
         backBuffer.Get(),
         nullptr,
         &renderTarget
-    );
+    ), "[Pipeline] Failed to create main render target");
 
-    // Create depth stensil state
+    // Create depth stencil state
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
     depthStencilDesc.DepthEnable = TRUE;
     depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
     wrl::ComPtr<ID3D11DepthStencilState> depthStencilState;
-    device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
+    LOG_ERROR(
+        device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState
+    ), "[Pipeline] Failed to create depth stencil state");
 
     // Bind depth state
     deviceContext->OMSetDepthStencilState(depthStencilState.Get(), 1);
@@ -70,18 +87,21 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     depthTextureDesc.SampleDesc.Quality = swapchainDesc.SampleDesc.Quality;
     depthTextureDesc.Usage = D3D11_USAGE_DEFAULT;
     depthTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    device->CreateTexture2D(&depthTextureDesc, nullptr, &depthStencil);
+    LOG_ERROR(
+        device->CreateTexture2D(&depthTextureDesc, nullptr, &depthStencil
+    ), "[Pipeline] Failed to create depth stencil buffer");
 
     // Create depth stencil
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
     depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
     depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     depthStencilViewDesc.Texture2D.MipSlice = 0;
+    LOG_ERROR(
     device->CreateDepthStencilView(
         depthStencil.Get(),
         &depthStencilViewDesc,
         &depthView
-    );
+    ), "[Pipeline] Failed to create depth stencil view");
 
     // Bind depth stencil
     deviceContext->OMSetRenderTargets(1, renderTarget.GetAddressOf(), depthView.Get());
@@ -93,16 +113,17 @@ Pipeline::Pipeline(HWND hWnd, int width, int height) : width(width), height(heig
     viewport.MaxDepth = 1.;
     viewport.TopLeftX = 0.;
     viewport.TopLeftY = 0.;
+    Logger::trace(std::format("[Pipeline] Creating viewport"));
     deviceContext->RSSetViewports(1, &viewport);
 
     // Init ImGui Renderer
+    Logger::trace(std::format("[Pipeline] Initializing ImGui (ImplDX11)"));
     ImGui_ImplDX11_Init(device.Get(), deviceContext.Get());
 }
 
 void Pipeline::presentBuffer() {
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-    swapchain->Present(1, NULL);
-    //                ~|~ Set to 0 to disable V-Sync
+    swapchain->Present(vsync, NULL);
 }
 
 void Pipeline::draw(size_t count) {

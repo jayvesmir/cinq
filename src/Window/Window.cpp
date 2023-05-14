@@ -20,7 +20,7 @@ Window::WindowClass::WindowClass() noexcept
     windowClass.cbClsExtra = 0;
     windowClass.cbWndExtra = 0;
     windowClass.lpszMenuName = nullptr;
-    windowClass.lpszClassName = className;
+    windowClass.lpszClassName = WindowClass::getName();
     RegisterClassEx(&windowClass);
 }
 
@@ -29,6 +29,9 @@ Window::Window(int width, int height, const char* title)
     // Compute the real size of the window 
     // so that the client region size matches
     // the width and height specified.
+    Logger::allocConsole();
+    Logger::bindConsoleOutput();
+    Logger::trace(std::format("[Window] Creating application window"));
     RECT windowRect;
     windowRect.left = 100;
     windowRect.right = width + windowRect.left;
@@ -57,11 +60,14 @@ Window::Window(int width, int height, const char* title)
     if (!window)
         throw CINQ_LAST_EXCEPT();
 
+    Logger::info(std::format("[Window] Created window '{}' ({})", title, WindowClass::getName()));
     ShowWindow(window, SW_SHOWDEFAULT);
 
-    // Init ImGui Window
+    // Init ImGui
+    Logger::trace(std::format("[Window] Initializing ImGui (ImplWin32)"));
     ImGui_ImplWin32_Init(window);
 
+    Logger::trace(std::format("[Window] Creating graphics pipeline"));
     pipeline = std::make_unique<Pipeline>(window, width, height);
 }
 
@@ -75,8 +81,23 @@ void Window::setTitle(const char* title) {
 
 void Window::setCursor(int x, int y) {
     RECT rect;
-    GetWindowRect(window, &rect);
+    GetClientRect(window, &rect);
     SetCursorPos(rect.left + x, rect.top + y);
+}
+
+void Window::setCursorRaw(int x, int y) {
+    SetCursorPos(x, y);
+}
+
+void Window::clipCursor() {
+    RECT rect;
+    GetClientRect(window, &rect);
+    MapWindowPoints(window, nullptr, reinterpret_cast<POINT*>(&rect), 2);
+    ClipCursor(&rect);
+}
+
+void Window::freeCursor() {
+    ClipCursor(nullptr);
 }
 
 bool Window::processMessages(int* exitCode) {
@@ -193,7 +214,7 @@ Result Window::handleMsg(HWND hWnd, uint msg, uint64_t uParam, int64_t param) no
 }
 
 Window::Exception::Exception(int line, const char* filepath, Result result)
-    : CinqException(line, filepath), result(result) {}
+    : CinqException(line, filepath), result(result) { Logger::error(std::format("[Cinq Window Exception] {} thrown in {}", getType(), getOriginString())); }
 
 const char* Window::Exception::what() const {
     char format[512];

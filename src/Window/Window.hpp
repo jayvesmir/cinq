@@ -4,11 +4,12 @@
 #include "Windows.hpp"
 #include "Keyboard.hpp"
 #include "Exception.hpp"
+#include "Core/Logger.hpp"
 #include "Core/Pipeline.hpp"
 #include "../res/Resource.hpp"
 
-#include <optional>
 #include <memory>
+#include <optional>
 
 class Window {
 private:
@@ -64,12 +65,15 @@ public:
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
+    void setCursor(int x, int y);
+    static void setCursorRaw(int x, int y);
     void setTitle(const char* title = nullptr);
     const char* getTitle() { return title; }
     static bool processMessages(int* exitCode);
     static void hideCursor() { while (ShowCursor(false) >= 0); }
     static void showCursor() { while (ShowCursor(true) < 0); }
-    void setCursor(int x, int y);
+    void clipCursor();
+    void freeCursor();
 
     Pipeline& getGraphicsPipeline() { return *pipeline; }
 };

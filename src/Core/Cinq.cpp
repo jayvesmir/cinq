@@ -1,30 +1,31 @@
 #include "Cinq.hpp"
 
 Cinq::Cinq()
-    : window(1280, 720, "Cinq"), width(1280), height(720), title("Cinq"), aspectRatio((float)width / height) {}
+    : window(1280, 720, "Cinq"), width(1280), height(720), title("Cinq"), aspectRatio((float)width / height), light(window.getGraphicsPipeline()) {}
 
 Cinq::Cinq(int width, int height, const char* title)
-    : window(width, height, title), width(width), height(height), title(title), aspectRatio((float)width / height) {
+    : window(width, height, title), width(width), height(height), title(title), aspectRatio((float)width / height), light(window.getGraphicsPipeline()) {
     drawables.push_back(
-        std::make_unique<Cube>(window.getGraphicsPipeline(), 0.f)
+        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), 0.f)
     );
 
     drawables.push_back(
-        std::make_unique<Cube>(window.getGraphicsPipeline(), 1.5f)
+        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), 1.5f)
     );
 
     drawables.push_back(
-        std::make_unique<Cube>(window.getGraphicsPipeline(), -1.5f)
+        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), -1.5f)
     );
 
-    // Factory factory(window.getGraphicsPipeline());
-    // drawables.reserve(drawableCount);
-    // std::generate_n(std::back_inserter(drawables), drawableCount, factory);
+    Factory factory(window.getGraphicsPipeline());
+    drawables.reserve(drawableCount);
+    std::generate_n(std::back_inserter(drawables), drawableCount, factory);
 }
 
 int Cinq::run() {
     srand((unsigned)time(0));
     int error;
+    Logger::info("[Renderer] Start render loop");
     while (!window.processMessages(&error))
         update();
 
@@ -36,12 +37,14 @@ static constexpr float bgColor[4] {0.1f, 0.1f, 0.12f, 1.f};
 void Cinq::update() {
     float ts = timer.markLap();
     ImGuiIO io = gui.getIO();
+    auto mouse = window.mouse.read();
 
     window.getGraphicsPipeline().clearBuffer(bgColor);
     window.getGraphicsPipeline().setCamera(camera.getTransformMatrix());
-    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveFovLH(camera.getFOV(), aspectRatio, camera.getNearClip(), camera.getFarClip()));
+    window.getGraphicsPipeline().setProjection(DirectX::XMMatrixPerspectiveFovLH(camera.fov, aspectRatio, camera.nearClip, camera.farClip));
 
     // Draw scene
+    light.draw(window.getGraphicsPipeline());
     for (auto& drawable : drawables) {
         drawable->update(ts);
         drawable->draw(window.getGraphicsPipeline());
@@ -50,9 +53,7 @@ void Cinq::update() {
     float t1 = timer.sinceLastLap();
 
     // Draw imgui
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
+    gui.newFrame();
 
     static bool showDemo     = false;
     static bool showControls = true;
@@ -94,11 +95,18 @@ void Cinq::update() {
             ImGui::Text("FPS: %d", (int)(1000/(t1*1000)));
             ImGui::Text("Frametime: %.4fms", t1*1000);
             ImGui::Text("Since last update: %.2fms", ts*1000);
-
-            ImGui::SetNextWindowBgAlpha(0.75f);
-            if (ImGui::Begin("Camera", &showControls, cameraWindowFlags))
-                camera.createInterface();
+            ImGui::Text("Objects: %d", drawables.size());
+            ImGui::Separator();
+            ImGui::Checkbox("V-Sync", &window.getGraphicsPipeline().vsync);
         }
+
+        ImGui::SetNextWindowBgAlpha(0.75f);
+        if (ImGui::Begin("Camera", &showControls, cameraWindowFlags))
+            camera.createInterface();
+            ImGui::SetNextWindowBgAlpha(0.75f);
+        if (ImGui::Begin("Light", &showControls, cameraWindowFlags))
+            light.createInterface();
+
         ImGui::End();
     }
 
@@ -119,7 +127,7 @@ void Cinq::update() {
         window.setTitle(buf);
         window.showCursor();
     }
-    
+
     if (camera.isFPS()) {
         // Forward
         if (window.keyboard.keyIsPressed('W'))
@@ -144,6 +152,14 @@ void Cinq::update() {
         // Down
         if (window.keyboard.keyIsPressed('E'))
             camera.translate({0.0f, -ts, 0.0f});
+
+        // Zoom In
+        if (window.keyboard.keyIsPressed(VK_ADD))
+            camera.fov -= ts;
+
+        // Zoom Out
+        if (window.keyboard.keyIsPressed(VK_SUBTRACT))
+            camera.fov += ts;
 
         // Using this because I've failed numerous times at trying to implement raw input ⊂(￣(ｴ)￣)⊃
         camera.rotate(io.MouseDelta.x, io.MouseDelta.y);

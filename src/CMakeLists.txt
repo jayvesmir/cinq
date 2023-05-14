@@ -34,6 +34,8 @@ add_custom_target(shaders)
 file(MAKE_DIRECTORY ${SHADER_DIR})
 set(
     SHADERS
+    Shader/SolidVS.hlsl
+    Shader/SolidPS.hlsl
     Shader/PhongVS.hlsl
     Shader/PhongPS.hlsl
     Shader/TextureVS.hlsl
@@ -44,13 +46,15 @@ set(
     Shader/ColorBlendPS.hlsl
 )
 
+set_source_files_properties(Shader/SolidVS.hlsl PROPERTIES shaderType "vs")
 set_source_files_properties(Shader/PhongVS.hlsl PROPERTIES shaderType "vs")
-set_source_files_properties(Shader/PhongPS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/TextureVS.hlsl PROPERTIES shaderType "vs")
-set_source_files_properties(Shader/TexturePS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/ColorIndexVS.hlsl PROPERTIES shaderType "vs")
-set_source_files_properties(Shader/ColorIndexPS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/ColorBlendVS.hlsl PROPERTIES shaderType "vs")
+set_source_files_properties(Shader/SolidPS.hlsl PROPERTIES shaderType "ps")
+set_source_files_properties(Shader/PhongPS.hlsl PROPERTIES shaderType "ps")
+set_source_files_properties(Shader/TexturePS.hlsl PROPERTIES shaderType "ps")
+set_source_files_properties(Shader/ColorIndexPS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(Shader/ColorBlendPS.hlsl PROPERTIES shaderType "ps")
 set_source_files_properties(${SHADERS} PROPERTIES shaderModel "4_0")
 

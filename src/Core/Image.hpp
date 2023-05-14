@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include "Color.hpp"
+#include "Logger.hpp"
 #include "Window/Exception.hpp"
 
 class Image {
@@ -12,7 +13,9 @@ public:
     // Still can't get myself to setup the pipeline error handling for some reason :()
     class Exception : public CinqException {
     public:
-        Exception(int line, const char* file, std::string msg) : CinqException(line, file), msg(std::move(msg)) {}
+        Exception(int line, const char* file, std::string msg) : CinqException(line, file), msg(std::move(msg)) {
+            Logger::error(std::format("[Cinq Image Exception] {} thrown in {}", getType(), getOriginString()));
+        }
         const char* what() const override;
         const char* getType() const override { return "Cinq Image Exception"; }
         const std::string& getMessage() const { return msg; }
@@ -56,6 +59,7 @@ public:
     static ImageType getImageType(const char* filename);
     void save(const char* filepath);
     void copyBuffer(const Image& src);
+    const char* filepath = "";
 private:
     Color* buffer;
     // Comp is the number of components in the pixels

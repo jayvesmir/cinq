@@ -15,7 +15,9 @@ public:
 
         D3D11_SUBRESOURCE_DATA subresourceData = {};
         subresourceData.pSysMem = &values;
-        getDevice(pipeline)->CreateBuffer(&bufferDesc, &subresourceData, &constantBuffer);
+        LOG_ERROR(
+            getDevice(pipeline)->CreateBuffer(&bufferDesc, &subresourceData, &constantBuffer
+        ), "[Bindable] Failed to create constant buffer");
     }
 
     ConstantBuffer(Pipeline& pipeline) {
@@ -26,17 +28,19 @@ public:
         bufferDesc.MiscFlags = 0;
         bufferDesc.ByteWidth = sizeof(T);
         bufferDesc.StructureByteStride = 0;
-
-        getDevice(pipeline)->CreateBuffer(&bufferDesc, nullptr, &constantBuffer);
+        LOG_ERROR(
+            getDevice(pipeline)->CreateBuffer(&bufferDesc, nullptr, &constantBuffer
+        ), "[Bindable] Failed to create constant buffer");
     }
 
     void update(Pipeline& pipeline, const T& values) {
         D3D11_MAPPED_SUBRESOURCE subresource;
-        getDeviceContext(pipeline)->Map(
-            constantBuffer.Get(), 0,
-            D3D11_MAP_WRITE_DISCARD, 0,
-            &subresource
-        );
+        LOG_ERROR(
+            getDeviceContext(pipeline)->Map(
+                constantBuffer.Get(), 0,
+                D3D11_MAP_WRITE_DISCARD, 0,
+                &subresource
+        ), "[Bindable] Failed to map constant buffer");
         memcpy(subresource.pData, &values, sizeof(values));
         getDeviceContext(pipeline)->Unmap(constantBuffer.Get(), 0);
     }

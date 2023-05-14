@@ -14,7 +14,9 @@ IndexBuffer::IndexBuffer(Pipeline& pipeline, const std::vector<uint16_t>& indice
 
     D3D11_SUBRESOURCE_DATA indexSubresourceData{};
     indexSubresourceData.pSysMem = indices.data();
-    getDevice(pipeline)->CreateBuffer(&indexBufferDesc, &indexSubresourceData, &indexBuffer);
+    LOG_ERROR(
+        getDevice(pipeline)->CreateBuffer(&indexBufferDesc, &indexSubresourceData, &indexBuffer
+    ), "[Bindable] Failed to create index buffer");
 }
 
 void IndexBuffer::bind(Pipeline& pipeline) {
