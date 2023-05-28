@@ -13,7 +13,9 @@ public:
         std::uniform_real_distribution<float>& rdist,
         std::uniform_real_distribution<float>& bdist );
     Cube(Pipeline& pipeline, float r, const char* textureFP = "res/cube.png");
+    Cube(Pipeline& pipeline, DirectX::XMFLOAT3 position, const char* textureFP = "res/cube.png");
     void update(float ts) override;
+    void initialize(Pipeline& pipeline, const char* textureFP);
     DirectX::XMMATRIX getTransformMatrix() const override;
 private:
     // Positional
@@ -38,6 +40,8 @@ private:
     float dphi   {0.f};
     float dchi   {0.f};
 
+    bool cartesian = true;
+
     struct Vertex {
         DirectX::XMFLOAT3 pos;
         struct {
@@ -59,8 +63,9 @@ public:
         std::uniform_real_distribution<float>& odist,
         std::uniform_real_distribution<float>& rdist,
         std::uniform_real_distribution<float>& bdist );
-    CubeSolid(Pipeline& pipeline, float r);
+    CubeSolid(Pipeline& pipeline, DirectX::XMFLOAT3 position);
     void update(float ts) override;
+    void initialize(Pipeline& pipeline);
     DirectX::XMMATRIX getTransformMatrix() const override;
 private:
     // Positional
@@ -73,6 +78,7 @@ private:
     float phi    {0.f};
     float chi    {0.f};
 
+    float x      {0.f};
     float y      {0.f};
     float z      {0.f};
 
@@ -83,6 +89,8 @@ private:
     float dtheta {0.f};
     float dphi   {0.f};
     float dchi   {0.f};
+
+    bool cartesian = true;
 
     struct Vertex {
         DirectX::XMFLOAT3 pos;

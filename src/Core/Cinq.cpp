@@ -6,15 +6,15 @@ Cinq::Cinq()
 Cinq::Cinq(int width, int height, const char* title)
     : window(width, height, title), width(width), height(height), title(title), aspectRatio((float)width / height), light(window.getGraphicsPipeline()) {
     drawables.push_back(
-        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), 0.f)
+        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), DirectX::XMFLOAT3{0.f, 0.f, 0.f})
     );
 
     drawables.push_back(
-        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), 1.5f)
+        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), DirectX::XMFLOAT3{1.5f, 0.f, 0.f})
     );
 
     drawables.push_back(
-        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), -1.5f)
+        std::make_unique<CubeSolid>(window.getGraphicsPipeline(), DirectX::XMFLOAT3{-1.5f, 0.f, 0.f})
     );
 
     Factory factory(window.getGraphicsPipeline());
